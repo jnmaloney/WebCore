@@ -16,8 +16,8 @@ public:
   int init(const char* title);
 
   GLFWwindow* g_window;
-  int width = 800;
-  int height = 600;
+  int width = 640; //800;
+  int height = 480; //600;
 
 protected:
 

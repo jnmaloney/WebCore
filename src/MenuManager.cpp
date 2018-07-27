@@ -46,6 +46,7 @@ void MenuManager::init(WindowManager& window)
   io.Fonts->AddFontFromFileTTF("data/xkcd-script.ttf", 23.0f);
   // io.Fonts->AddFontFromFileTTF("data/xkcd-script.ttf", 18.0f);
   // io.Fonts->AddFontFromFileTTF("data/xkcd-script.ttf", 26.0f);
+  m_headerFont =
   io.Fonts->AddFontFromFileTTF("data/xkcd-script.ttf", 48.0f);
   io.Fonts->AddFontDefault();
 

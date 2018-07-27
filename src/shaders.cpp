@@ -49,8 +49,8 @@ GLuint buildProgram(GLuint vertexShader, GLuint fragmentShader, const char * ver
 	glAttachShader(programObject, vertexShader);
 	glAttachShader(programObject, fragmentShader);
 	glBindAttribLocation(programObject, 0, vertexPositionName);
-	glBindAttribLocation(programObject, 1, vertexNormalName); // add line
-	glBindAttribLocation(programObject, 2, (const char*)"vUV"); // add line
+	//glBindAttribLocation(programObject, 1, vertexNormalName); // add line
+	if (vertexNormalName) glBindAttribLocation(programObject, 1, vertexNormalName); // add line
 	glLinkProgram(programObject);
 
 	//check if the program linked successfully

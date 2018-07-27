@@ -9,14 +9,23 @@
 class Texture;
 
 
+class Pallette
+{
+public:
+  Pallette() {}
+  ~Pallette() {}
+  std::vector<glm::vec3> colours;
+};
+
+
 class Mesh
 {
 
 public:
 
-  static GLuint attribute_v_normal;
-  static GLuint attribute_v_coord;
-  static GLuint attribute_v_uv;
+  // static GLuint attribute_v_normal;
+  // static GLuint attribute_v_coord;
+  // static GLuint attribute_v_uv;
 
   Mesh();
   ~Mesh();
@@ -63,10 +72,20 @@ public:
   GLuint m_vbo_vertices = 0;
   GLuint m_vbo_uvs = 0;
   //GLuint m_ibo_elements = 0;
-  std::map< std::string, GLuint > m_matIboElements;
+
+  // This gets sent to the render queue
+  struct IboElement
+  {
+    std::string name;
+    int size = 0;
+    int index = 0;
+    GLuint elements;
+  };
+  std::map< int, IboElement > m_matIboElements;
 
 
   Texture* texture = 0;
+  Pallette* pallette = 0;
 
 protected:
 

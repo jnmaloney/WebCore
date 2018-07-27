@@ -23,9 +23,9 @@ std::vector<std::string> split(const std::string &s, char delim) {
 }
 
 
-GLuint Mesh::attribute_v_normal = -1;
-GLuint Mesh::attribute_v_coord = -1;
-GLuint Mesh::attribute_v_uv = -1;
+// GLuint Mesh::attribute_v_normal = -1;
+// GLuint Mesh::attribute_v_coord = -1;
+// GLuint Mesh::attribute_v_uv = -1;
 
 
 Mesh::Mesh()
@@ -238,7 +238,13 @@ void Mesh::upload_obj()
       glBufferData(GL_ELEMENT_ARRAY_BUFFER,(*i).second.size() * sizeof((*i).second[0]),
         (*i).second.data(), GL_STATIC_DRAW); // elements (faces)
 
-      m_matIboElements[(*i).first] = ibo_elements;
+      //m_matIboElements[(*i).first] = ibo_elements;
+      Mesh::IboElement iboel;
+      iboel.name = (*i).first;
+      iboel.index = m_matIboElements.size();
+      iboel.size = m_matElements[(*i).first].size();
+      iboel.elements = ibo_elements;
+      m_matIboElements[iboel.index] = iboel;
 
     } else std::cout << "no upload ele" << std::endl;
   }
@@ -247,153 +253,12 @@ void Mesh::upload_obj()
 
 void Mesh::drawWireframe(GLuint uniformDiffuse, int tag)
 {
-  if (m_matElements[m_active].size() == 0) return;
-
-  glEnableVertexAttribArray(attribute_v_coord);
-  // Describe our vertices array to OpenGL (it can't guess its format automatically)
-  glBindBuffer(GL_ARRAY_BUFFER, m_vbo_vertices);
-  glVertexAttribPointer(
-    attribute_v_coord,  // attribute
-    4,                  // number of elements per vertex, here (x,y,z,w)
-    GL_FLOAT,           // the type of each element
-    GL_FALSE,           // take our values as-is
-    0,                  // no extra data between each position
-    0                   // offset of first element
-  );
-
-  for (auto i = m_matIboElements.begin(); i != m_matIboElements.end(); ++i)
-  {
-     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (*i).second);
-     int size = m_matElements[(*i).first].size();
-
-     glDrawElements(GL_LINES, size, GL_UNSIGNED_SHORT, 0);
-     //glDrawElements(GL_POINTS, size, GL_UNSIGNED_SHORT, 0);
-  }
-
-  glDisableVertexAttribArray(attribute_v_coord);
 }
 
 
 void Mesh::draw(GLuint uniformDiffuse)
 {
-  if (m_matElements[m_active].size() == 0) return;
 
-  //
-  // Draw
-  //
-
-
-  glEnableVertexAttribArray(attribute_v_coord);
-  // Describe our vertices array to OpenGL (it can't guess its format automatically)
-  glBindBuffer(GL_ARRAY_BUFFER, m_vbo_vertices);
-  glVertexAttribPointer(
-    attribute_v_coord,  // attribute
-    4,                  // number of elements per vertex, here (x,y,z,w)
-    GL_FLOAT,           // the type of each element
-    GL_FALSE,           // take our values as-is
-    0,                  // no extra data between each position
-    0                   // offset of first element
-  );
-
-  glEnableVertexAttribArray(attribute_v_uv);
-  glBindBuffer(GL_ARRAY_BUFFER, m_vbo_uvs);
-  glVertexAttribPointer(
-    attribute_v_uv, // attribute
-    2,                  // number of elements per vertex, here (x,y,z)
-    GL_FLOAT,           // the type of each element
-    GL_FALSE,           // take our values as-is
-    0,                  // no extra data between each position
-    0                   // offset of first element
-  );
-
-  glEnableVertexAttribArray(attribute_v_normal);
-  glBindBuffer(GL_ARRAY_BUFFER, m_vbo_normals);
-  glVertexAttribPointer(
-    attribute_v_normal, // attribute
-    3,                  // number of elements per vertex, here (x,y,z)
-    GL_FLOAT,           // the type of each element
-    GL_FALSE,           // take our values as-is
-    0,                  // no extra data between each position
-    0                   // offset of first element
-  );
-
-  // if (m_ibo_elements == 0)
-  // {
-  //   glDrawArrays(GL_TRIANGLES, 0, m_obj_vertices.size());
-  // }
-  //else
-  // {
-  //  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo_elements);
-  //  int size = m_matElements[m_active].size();
-  //  //glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
-  //  //std::cout << size << std::endl;
-  //  //glDrawElements(GL_POINTS, size/sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
-  //  glDrawElements(GL_TRIANGLES, size, GL_UNSIGNED_SHORT, 0);
-  //  //glDrawElements(GL_POINTS, size, GL_UNSIGNED_SHORT, 0);
-  // }
-
-
-  // //float colour0[] = { 58.f / 255.f, 121.f / 255.f,  94.f / 255.f }; // pine
-  // float colour0[] = { 88.f / 255.f, 91.f / 255.f,  94.f / 255.f }; // paved
-  // //float colour1[] = { 0.f / 255.f, 179.f / 255.f,  105.f / 255.f }; // Asph?
-  // float colour1[] = { 160.f / 255.f, 169.f / 255.f,  155.f / 255.f }; // Asph?
-  // float colour2[] = { 123.f / 255.f, 0.f / 255.f,  105.f / 255.f }; // Grass Green
-  // float colour3[] = { 123.f / 255.f, 179.f / 255.f,  0.f / 255.f }; // Grass Green
-  // float colour4[] = {1.f, 1.f, 1.f }; // Grass Green
-  //
-  int c = 0;
-  for (auto i = m_matIboElements.begin(); i != m_matIboElements.end(); ++i)
-  {
-     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (*i).second);
-     int size = m_matElements[(*i).first].size();
-     //int size;
-     //glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
-     //std::cout << size << std::endl;
-     //glDrawElements(GL_POINTS, size/sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
-
-          // if (c%5==0) glUniform3fv(uniformDiffuse, 1, colour0);
-          // if (c%5==1) glUniform3fv(uniformDiffuse, 1, colour1);
-          // if (c%5==2) glUniform3fv(uniformDiffuse, 1, colour2);
-          // if (c%5==3) glUniform3fv(uniformDiffuse, 1, colour3);
-          // if (c%5==4) glUniform3fv(uniformDiffuse, 1, colour4);
-
-      setRenderColour(c++, uniformDiffuse);
-
-     glDrawElements(GL_TRIANGLES, size, GL_UNSIGNED_SHORT, 0);
-     //glDrawElements(GL_POINTS, size, GL_UNSIGNED_SHORT, 0);
-
-  }
-
-  glDisableVertexAttribArray(attribute_v_coord);
-  //glDisableVertexAttribArray(1);
-
-
-  // glEnableVertexAttribArray(0);
-  // glBindBuffer(GL_ARRAY_BUFFER, m_vbo_vertices);
-  // GLushort* ptr = 0;
-  // glVertexAttribPointer(
-  //    0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-  //    4,                  // size
-  //    GL_FLOAT,           // type
-  //    GL_FALSE,           // normalized?
-  //    7*sizeof(GLushort),                  // stride
-  //    (void*)(ptr+0)            // array buffer offset
-  // );
-  // glEnableVertexAttribArray(1);
-  // glVertexAttribPointer(
-  //    1,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-  //    3,                  // size
-  //    GL_FLOAT,           // type
-  //    GL_FALSE,           // normalized?
-  //    7*sizeof(GLushort),                  // stride
-  //    (void*)(ptr+4)            // array buffer offset
-  // );
-  // // Draw the triangle !
-  // glDrawArrays(GL_TRIANGLES, 0, 6); // Starting from vertex 0; 3 vertices total -> 1 triangle
-  // //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo_elements);
-  // //glDrawElements(GL_TRIANGLES, 696/sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
-  // glDisableVertexAttribArray(0);
-  // glDisableVertexAttribArray(1);
 }
 
 

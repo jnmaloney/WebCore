@@ -27,17 +27,13 @@ void RenderSystem::init(WindowManager& window)
     "attribute vec2 vUV; \n"
     "uniform mat4 ModelLocal; \n"
     "uniform mat4 ViewProj; \n"
-    //"uniform mat4 MVP; \n"
     "uniform vec3 diffuse;  \n"
 		"varying vec3 color;                                 \n" // To FS
     "varying vec2 uv;                                 \n"
 		"void main()                                         \n"
 		"{                                                   \n"
 		"   gl_Position = ViewProj * (ModelLocal * vPosition);                         \n"
-    //"   gl_Position = ModelLocal * ViewProj * vPosition;                         \n"
     "   color = diffuse;             \n"
-    //"   color = vec3(1.0,1.0,1.0);  \n"
-    //"   uv = vUV; \n"
     "   uv.x = vUV.x; \n"
     "   uv.y = vUV.y; \n"
 		"}                                                   \n";
@@ -50,33 +46,44 @@ void RenderSystem::init(WindowManager& window)
     "varying vec2 uv;                                 \n"
 		"void main()                                  \n"
 		"{                                            \n"
-    //"  gl_FragColor = vec4 ( color, 1.0 );        \n"
-    //"  vec3 shade = texture2D(BaseMap, vec2(uv[1], uv[0])).rgb; \n"
-    //"  vec3 shade = vec3( uv.x, uv.y, 0.0 );        \n"
-    //"  vec3 shade = texture2D(BaseMap, uv).rgb; \n"
     "  vec3 shade = texture2D(BaseMap, uv).rgb; \n"
     "  gl_FragColor = vec4(color * shade, 1.0);"
-    //"  gl_FragColor = vec4(color, 1.0);"
-    //" color; \n"
-    //"  gl_FragColor += vec4 ( 0.1*uv.x, 0.1*uv.y, 0.0, 0.0 );        \n"
 		"}                                            \n";
+
+
+    const char vertexShaderSource2[] =
+      "attribute vec4 vPosition;		                     \n"
+      "uniform mat4 ModelLocal; \n"
+      "uniform mat4 ViewProj; \n"
+      "uniform vec3 diffuse;  \n"
+      "varying vec3 color;                                 \n" // To FS
+      "void main()                                         \n"
+      "{                                                   \n"
+      "   gl_Position = ViewProj * (ModelLocal * vPosition);                         \n"
+      "   color = diffuse;             \n"
+      "}                                                   \n";
+
+    const char fragmentShaderSource2[] =
+      "precision mediump float;                     \n"
+      "uniform float alpha;									\n"
+      "varying vec3 color;                          \n"   // From VS
+      "void main()                                  \n"
+      "{                                            \n"
+      "  gl_FragColor = vec4(color, 1.0);"
+      "}                                            \n";
 
 	//load vertex and fragment shaders
 	GLuint vertexShader = loadShader(GL_VERTEX_SHADER, vertexShaderSource);
 	GLuint fragmentShader = loadShader(GL_FRAGMENT_SHADER, fragmentShaderSource);
-	programObject = buildProgram(vertexShader, fragmentShader, "vPosition", "vNormal");
+	programObject = buildProgram(vertexShader, fragmentShader, "vPosition", "Vuv");
 
-  Mesh::attribute_v_coord = glGetAttribLocation(programObject, "vPosition");
-  Mesh::attribute_v_normal = glGetAttribLocation(programObject, "vNormal");
-  Mesh::attribute_v_uv = glGetAttribLocation(programObject, "vUV");
+  GLuint vertexShader2 = loadShader(GL_VERTEX_SHADER, vertexShaderSource2);
+  GLuint fragmentShader2 = loadShader(GL_FRAGMENT_SHADER, fragmentShaderSource2);
+  programObject2 = buildProgram(vertexShader2, fragmentShader2, "vPosition", 0);
 
-  if (Mesh::attribute_v_normal == -1) std::cout << "attribute_v_normal err -1" << std::endl;
-  if (Mesh::attribute_v_coord == -1) std::cout << "attribute_v_coord err -1" << std::endl;
-  if (Mesh::attribute_v_uv == -1) std::cout << "attribute_v_uv err -1" << std::endl;
-
-  std::cout << "attribute_v_coord " << Mesh::attribute_v_coord << std::endl;
-  std::cout << "attribute_v_normal " << Mesh::attribute_v_normal << std::endl;
-  std::cout << "attribute_v_uv " << Mesh::attribute_v_uv << std::endl;
+  attribute_v_coord = glGetAttribLocation(programObject, "vPosition");
+  attribute_v_coord2 = glGetAttribLocation(programObject2, "vPosition");
+  attribute_v_uv = glGetAttribLocation(programObject, "vUV");
 
   // Tex
   GLint texLoc;
@@ -85,9 +92,11 @@ void RenderSystem::init(WindowManager& window)
 
 	//save location of uniform variables
   uniformDiffuse = glGetUniformLocation(programObject, "diffuse");
-  //uniformMVP = glGetUniformLocation(programObject, "MVP");
+  uniformDiffuse2 = glGetUniformLocation(programObject2, "diffuse");
   uniformVP = glGetUniformLocation(programObject, "ViewProj");
   uniformML = glGetUniformLocation(programObject, "ModelLocal");
+  uniformVP2 = glGetUniformLocation(programObject2, "ViewProj");
+  uniformML2 = glGetUniformLocation(programObject2, "ModelLocal");
   uniformAlpha = glGetUniformLocation(programObject, "alpha");
 }
 
@@ -107,8 +116,6 @@ void RenderSystem::zoom(int i)
   if (m_zoomFactor > 6) m_zoomFactor = 6;
 
   m_zoom = 0.5 + 0.5 * (1<<m_zoomFactor);
-
-  std::cout << "Zoom " << m_zoomFactor << std::endl;
 }
 
 
@@ -129,7 +136,7 @@ void RenderSystem::start()
   glDepthFunc(GL_LESS);
 
   // Enable our shader programlightmap_house1
-  glUseProgram(programObject);
+  //glUseProgram(programObject);
 
   // Camera view
 
@@ -151,7 +158,10 @@ void RenderSystem::start()
 
   glm::mat4 VP = Projection * View;
 
+  glUseProgram(programObject);
   glUniformMatrix4fv(uniformVP, 1, GL_FALSE, &VP[0][0]);
+  glUseProgram(programObject2);
+  glUniformMatrix4fv(uniformVP2, 1, GL_FALSE, &VP[0][0]);
 
 
   // DEBUG
@@ -172,7 +182,7 @@ void RenderSystem::start()
 
 void RenderSystem::end()
 {
-
+  glUseProgram(programObject);
 }
 
 
@@ -216,4 +226,39 @@ void RenderSystem::setCursor(int x, int y)
   float a = -m_start.z / m_dir.z;
   m_cursorX = m_start.x + a * m_dir.x;
   m_cursorY = m_start.y + a * m_dir.y;
+}
+
+
+bool RenderSystem::enableVertexPos(GLint program)
+{
+  if (program == programObject)
+  {
+      glEnableVertexAttribArray(attribute_v_coord);
+      att = attribute_v_coord;
+      return true;
+  }
+
+  if (program == programObject2)
+  {
+      glEnableVertexAttribArray(attribute_v_coord2);
+      att = attribute_v_coord2;
+      return true;
+  }
+
+  att = 0;
+  return false;
+}
+
+
+bool RenderSystem::enableVertexUV(GLint program)
+{
+  if (program == programObject)
+  {
+      glEnableVertexAttribArray(attribute_v_uv);
+      att = attribute_v_uv;
+      return true;
+  }
+
+  att = 0;
+  return false;
 }
