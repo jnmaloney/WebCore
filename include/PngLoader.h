@@ -19,7 +19,6 @@ public:
 
   int load(const char* filename);
 
-
   png_image image; /* The control structure used by libpng */
 
   /* Image data */

@@ -18,6 +18,10 @@ public:
   void start();
   void end();
 
+  void setViewSettings(double hfov, double near = 1.0, double far = 1.0e6);
+
+  void setCameraPos(float x, float y, float z);
+
   bool enableVertexPos(GLint program);
   bool enableVertexUV(GLint program);
 
@@ -25,6 +29,11 @@ public:
   void setCursor(int x, int y);
   float m_cursorX = 0.f;
   float m_cursorY = 0.f;
+
+  void modeOrtho();
+  void modeOrtho(float x, float y);
+  void modeOrtho(float x, float y, float w, float h);
+  void modePersp();
 
   /*
     Non-UBO uniform updates
@@ -51,16 +60,10 @@ public:
   void zoom(int);
   GLint uniformML;
   GLint uniformVP;
-  GLint uniformDiffuse;
-  GLint uniformML2;
-  GLint uniformVP2;
-  GLint uniformDiffuse2;
-  GLint uniformAlpha;
 
   // Vars
   long m_shader;
   GLuint programObject; // 1 Texture
-  GLuint programObject2; // No textures
 
   // View settings
   double m_cameraX = 0.0;
@@ -71,23 +74,16 @@ public:
   // The window that we render to
   WindowManager& m_window = *WindowManager::getInstance();
 
-  GLint att = 0;
+  // Uniforms NEW
+  GLint attribute_v_coord;
+  GLint attribute_v_uv;
 
 protected:
 
   unsigned int m_default_framebuffer = 0;
 
-  // Non - core
 
-
-
-  // Uniforms OLD
-  GLint uniform_s_GBuffer;
-  GLint lightPos, lightCol;
-
-  // Uniforms NEW
-  GLint attribute_v_coord;
-  GLint attribute_v_coord2;
-  GLint attribute_v_uv;
+  glm::mat4 Projection;
+  glm::mat4 View;
 
 };

@@ -28,6 +28,8 @@ public:
 
   ImFont* m_headerFont = 0;
 
+  std::string fontNameTTF = "data/font/your-quota.ttf";
+
 protected:
   void window_display();
 };
