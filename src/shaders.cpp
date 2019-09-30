@@ -9,7 +9,7 @@ GLuint loadShader(GLenum type, const char *source)
 	GLuint shader = glCreateShader(type);
 	if (shader == 0)
 	{
-		cerr << "Error creating shader" << endl;
+		//cerr << "Error creating shader" << endl;
 		return 0;
 	}
 
@@ -23,20 +23,20 @@ GLuint loadShader(GLenum type, const char *source)
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
 	if (!compiled)
 	{
-		cerr << "Shader compilation error #" << shader << endl;
+		//cerr << "Shader compilation error #" << shader << endl;
 
 		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &info_length);
     if(info_length > 0) {
         char info_log[1024] = {0};
         glGetShaderInfoLog(shader, sizeof(info_log), NULL, info_log);
-        cerr << "Info compiling " << shader << ":" << info_log;
+        //cerr << "Info compiling " << shader << ":" << info_log;
 		}
 
 		glDeleteShader(shader);
 		return 0;
 	}
 	else {
-		cerr << "Shader complete #" << shader << endl;
+	//	cerr << "Shader complete #" << shader << endl;
 	}
 
 	return shader;
@@ -58,7 +58,7 @@ GLuint buildProgram(GLuint vertexShader, GLuint fragmentShader, const char * ver
 	glGetProgramiv(programObject, GL_LINK_STATUS, &linked);
 	if (!linked)
 	{
-		cerr << "Program link error" << endl;
+		//cerr << "Program link error" << endl;
 		glDeleteProgram(programObject);
 		return 0;
 	}

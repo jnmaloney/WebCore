@@ -15,8 +15,12 @@ public:
 
   void init(WindowManager& window);
 
-  void start();
+  void start(const glm::vec3& from, const glm::vec3& lookAt);
   void end();
+
+  void setViewSettings(double hfov, double near = 1.0, double far = 1.0e6);
+
+
 
   bool enableVertexPos(GLint program);
   bool enableVertexUV(GLint program);
@@ -89,5 +93,8 @@ protected:
   GLint attribute_v_coord;
   GLint attribute_v_coord2;
   GLint attribute_v_uv;
+
+  glm::mat4 Projection;
+  glm::mat4 View;
 
 };

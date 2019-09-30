@@ -22,7 +22,8 @@ public:
 
   // Getting ready to submit
   void setProgram(GLint program);
-  void setMesh(Mesh* mesh);
+  //void setMesh(Mesh* mesh);
+  void setMesh(int meshIndex);
   void setMVP(glm::mat4 mvp);
   void setDiffuse(glm::vec3 d);
   void setPallette(std::vector<int> p);

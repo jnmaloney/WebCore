@@ -51,7 +51,7 @@ void Mesh::load_obj(const char* filename)
       cerr << "Cannot open " << filename << endl; exit(1);
   }
 
-  cout << "opened " << filename << endl;
+  //cout << "opened " << filename << endl;
 
   std::vector<glm::vec3>& load_normals = m_obj_normals;
   std::vector<glm::vec2>& load_uvs = m_obj_uvs;
@@ -64,9 +64,10 @@ void Mesh::load_obj(const char* filename)
       {
           istringstream s(line.substr(2));
           glm::vec4 v;
-          s >> v.x;
-          s >> v.z;
           s >> v.y;
+          s >> v.z;
+          s >> v.x;
+          v.x = -v.x;
           v.w = 1.0f;
           m_obj_vertices.push_back(0.02f * v);
       }
@@ -114,7 +115,7 @@ void Mesh::load_obj(const char* filename)
       {
           istringstream s(line.substr(7));
           s >> m_active;
-          cout << m_active << endl;
+          //cout << m_active << endl;
       }
       // else if (line.substr(0,2) == "s ")
       // {
@@ -132,7 +133,7 @@ void Mesh::load_obj(const char* filename)
       }
   }
 
-  cout << "loaded " << m_obj_vertices.size() << " vertices." << endl;
+  //cout << "loaded " << m_obj_vertices.size() << " vertices." << endl;
   //cout << "loaded " << m_obj_elements.size() << " elements." << endl;
 
   if (m_obj_uvs.size() == 0)
@@ -226,7 +227,7 @@ void Mesh::upload_obj()
       m_vertN.size() * sizeof(m_vertN[0]),
       m_vertN.data(), GL_STATIC_DRAW);
   } else std::cout << "no upload nor" << std::endl;
-  std::cout << m_vertN[0].x << " " << m_vertN[0].y << " " << m_vertN[0].z << std::endl;
+  //std::cout << m_vertN[0].x << " " << m_vertN[0].y << " " << m_vertN[0].z << std::endl;
 
   for (auto i = m_matElements.begin(); i != m_matElements.end(); ++i)
   {

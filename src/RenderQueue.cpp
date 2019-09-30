@@ -3,6 +3,7 @@
 #include <iostream>
 #include "Texture.h"
 #include "RenderSystem.h"
+#include "MeshManager.h"
 
 
 RenderQueue::RenderQueue()
@@ -32,9 +33,12 @@ void RenderQueue::setProgram(GLint program)
 }
 
 
-void RenderQueue::setMesh(Mesh* mesh)
+//void RenderQueue::setMesh(Mesh* mesh)
+void RenderQueue::setMesh(int meshIndex)
 {
   //std::cout << "Set Mesh " << (m_currentMeshLevel ? m_currentMeshLevel->size() : 0) << std::endl;
+
+  Mesh* mesh = MeshManager::get()->getMesh(meshIndex);
 
   (*m_currentMeshLevel)[mesh];
   m_currentTransformLevel = &( (*m_currentMeshLevel)[mesh] );
@@ -83,6 +87,9 @@ void RenderQueue::setMVP(glm::mat4 mvp)
 void RenderQueue::submit()
 {
   // Add elements to ElementLevel
+  // TODO
+  m_currentTransform.x = glm::mat4(1.0);
+  m_currentTransformLevel->push_back(m_currentTransform);
 }
 
 
@@ -128,12 +135,12 @@ void RenderQueue::draw(GLint a0, GLint a1, RenderSystem* rs)
           0                   // offset of first element
         );
       }
-
-      if (mesh->texture)
-      {
-        mesh->texture->bind();
-      }
-      else
+      
+      // if (mesh->texture)
+      // {
+      //   mesh->texture->bind();
+      // }
+      // else
       {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -144,7 +151,7 @@ void RenderQueue::draw(GLint a0, GLint a1, RenderSystem* rs)
         // Set the local transform matrix
 
         glUniformMatrix4fv(rs->uniformML, 1, GL_FALSE, &transforms.x[0][0]);
-        glUniformMatrix4fv(rs->uniformML2, 1, GL_FALSE, &transforms.x[0][0]);
+        //glUniformMatrix4fv(rs->uniformML2, 1, GL_FALSE, &transforms.x[0][0]);
 
         // Draw Elements
         for (auto const elements : mesh->m_matIboElements)
@@ -186,7 +193,7 @@ void RenderQueue::draw(GLint a0, GLint a1, RenderSystem* rs)
           }
 
           glUniform3fv(rs->uniformDiffuse, 1, colour);
-          glUniform3fv(rs->uniformDiffuse2, 1, colour);
+          //glUniform3fv(rs->uniformDiffuse2, 1, colour);
 
           //
           //              ----     DRAW     ----

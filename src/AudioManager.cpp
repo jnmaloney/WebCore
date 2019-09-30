@@ -126,7 +126,7 @@ void AudioManager::play(int track, bool loop)
   m_currentTrack = track;
 
   // Play
-  alSourcef(m_tracks[track].source, AL_GAIN, 0.25);
+  alSourcef(m_tracks[track].source, AL_GAIN, 0.75);
   alSourcePlay(m_tracks[track].source);
 
   if (loop) alSourcei(m_tracks[track].source, AL_LOOPING, AL_TRUE);
@@ -637,7 +637,7 @@ bool AudioManager::LoadOGGFile(const char * filename, ALenum * _format, ALuint* 
   }
 
   m_audioBuffer = b;//bufs[0];
-  std::cout << "buffer #" << m_audioBuffer << std::endl;
+  //std::cout << "buffer #" << m_audioBuffer << std::endl;
 
   // Can delete data here?
   //m_convertedBuffer.resize(0);
