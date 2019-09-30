@@ -21,6 +21,8 @@ public:
   void draw(RenderSystem* rs);
 
   // Getting ready to submit
+  void setProgram(GLint program);
+  void setMesh(Mesh* mesh);
   void setMVP(glm::mat4 mvp);
   void setTile(int t);
 

@@ -48,46 +48,16 @@ void Texture::loadPng_withCollisionShapes(const char* file, TileSet* tileset)
     GL_UNSIGNED_BYTE,
     loader.buffer);
 
-  glGenerateMipmap(GL_TEXTURE_2D);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-  glBindTexture(GL_TEXTURE_2D, m_texture);
-}
-
-
-void Texture::loadPng(const char* file)
-{
-  PngLoader loader;
-  loader.load(file);
-
-  glActiveTexture(GL_TEXTURE1);
-
-  glGenTextures(1, &m_texture);
-
-  glBindTexture(GL_TEXTURE_2D, m_texture);
-
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-  // TODO GL_RGBA format to match PNG format
-  glTexImage2D(
-    GL_TEXTURE_2D,
-    0,
-    GL_RGBA,
-    loader.image.width,
-    loader.image.height,
-    0,
-    GL_RGBA,
-    GL_UNSIGNED_BYTE,
-    loader.buffer);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
   glGenerateMipmap(GL_TEXTURE_2D);
 
   glBindTexture(GL_TEXTURE_2D, m_texture);
 
-  mWidth = loader.image.width;
-  mHeight = loader.image.height;
+  std::cout << "Texture: " << m_texture << std::endl;
+
 }
 
 

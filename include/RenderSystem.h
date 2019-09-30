@@ -18,10 +18,6 @@ public:
   void start();
   void end();
 
-  void setViewSettings(double hfov, double near = 1.0, double far = 1.0e6);
-
-  void setCameraPos(float x, float y, float z);
-
   bool enableVertexPos(GLint program);
   bool enableVertexUV(GLint program);
 
