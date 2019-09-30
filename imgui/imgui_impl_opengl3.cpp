@@ -129,7 +129,7 @@ void    ImGui_ImplOpenGL3_RenderDrawData(ImDrawData* draw_data)
     glUseProgram(g_ShaderHandle);
     glUniform1i(g_AttribLocationTex, 0);
     glUniformMatrix4fv(g_AttribLocationProjMtx, 1, GL_FALSE, &ortho_projection[0][0]);
-    if (&glBindSampler) glBindSampler(0, 0); // We use combined texture/sampler state. Applications using GL 3.3 may set that otherwise.
+    //if (&glBindSampler) glBindSampler(0, 0); // We use combined texture/sampler state. Applications using GL 3.3 may set that otherwise.
 
     // Recreate the VAO every time
     // (This is to easily allow multiple GL contexts. VAO are not shared among GL contexts, and we don't track creation/deletion of windows so we don't have an obvious key to use to cache them.)
@@ -189,7 +189,7 @@ void    ImGui_ImplOpenGL3_RenderDrawData(ImDrawData* draw_data)
     // Restore modified GL state
     glUseProgram(last_program);
     glBindTexture(GL_TEXTURE_2D, last_texture);
-    if (&glBindSampler) glBindSampler(0, last_sampler);
+    //if (&glBindSampler) glBindSampler(0, last_sampler);
     glActiveTexture(last_active_texture);
     glBindVertexArray(last_vertex_array);
     //std::cout << "bindbuf3" << std::endl;
@@ -226,8 +226,8 @@ bool ImGui_ImplOpenGL3_CreateFontsTexture()
     // Store our identifier
     io.Fonts->TexID = (void *)(intptr_t)g_FontTexture;
 
-    std::cout << io.Fonts->TexID << std::endl;
-    std::cout << g_FontTexture << std::endl;
+    // std::cout << io.Fonts->TexID << std::endl;
+    // std::cout << g_FontTexture << std::endl;
 
     // Restore state
     glBindTexture(GL_TEXTURE_2D, last_texture);
@@ -294,33 +294,33 @@ bool    ImGui_ImplOpenGL3_CreateDeviceObjects()
   	glGetShaderiv(g_VertHandle, GL_COMPILE_STATUS, &compiled);
   	if (!compiled)
   	{
-  		cout << "Shader compilation error #" << g_VertHandle << endl;
+  		//cout << "Shader compilation error #" << g_VertHandle << endl;
 
   		glGetShaderiv(g_VertHandle, GL_INFO_LOG_LENGTH, &info_length);
       if(info_length > 0) {
           char info_log[1024] = {0};
           glGetShaderInfoLog(g_VertHandle, sizeof(info_log), NULL, info_log);
-          cout << "Info compiling " << g_VertHandle << ":" << info_log;
+          //cout << "Info compiling " << g_VertHandle << ":" << info_log;
   		}
   	}
     else {
-        cout << "Shader complete #" << g_VertHandle << endl;
+        //cout << "Shader complete #" << g_VertHandle << endl;
     }
     info_length = 0;
   	glGetShaderiv(g_FragHandle, GL_COMPILE_STATUS, &compiled);
   	if (!compiled)
   	{
-  		cout << "Shader compilation error #" << g_FragHandle << endl;
+  		//cout << "Shader compilation error #" << g_FragHandle << endl;
 
   		glGetShaderiv(g_FragHandle, GL_INFO_LOG_LENGTH, &info_length);
       if(info_length > 0) {
           char info_log[1024] = {0};
           glGetShaderInfoLog(g_FragHandle, sizeof(info_log), NULL, info_log);
-          cout << "Info compiling " << g_FragHandle << ":" << info_log;
+          //cout << "Info compiling " << g_FragHandle << ":" << info_log;
   		}
   	}
     else {
-		    cout << "Shader complete #" << g_FragHandle << endl;
+		    //cout << "Shader complete #" << g_FragHandle << endl;
 	  }
 
 
