@@ -1,4 +1,5 @@
 #include "PngLoader.h"
+#include <iostream>
 
 
 PngLoader::PngLoader()

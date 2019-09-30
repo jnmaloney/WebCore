@@ -3,6 +3,7 @@
 #include <vector>
 #include <iostream>
 #include "PngLoader.h"
+#include "PngUtils.h"
 
 
 Texture::Texture()
@@ -17,17 +18,23 @@ Texture::~Texture()
 }
 
 
-void Texture::loadPng(const char* file)
+void Texture::loadPng_withCollisionShapes(const char* file, TileSet* tileset)
 {
   PngLoader loader;
   loader.load(file);
-
+  PngUtils pngu;
+  pngu.prepareCollisionShapes(&loader, tileset);
 
   glActiveTexture(GL_TEXTURE1);
 
   glGenTextures(1, &m_texture);
 
   glBindTexture(GL_TEXTURE_2D, m_texture);
+
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
   // TODO GL_RGBA format to match PNG format
   glTexImage2D(
@@ -41,42 +48,56 @@ void Texture::loadPng(const char* file)
     GL_UNSIGNED_BYTE,
     loader.buffer);
 
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glGenerateMipmap(GL_TEXTURE_2D);
 
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+  glBindTexture(GL_TEXTURE_2D, m_texture);
+}
+
+
+void Texture::loadPng(const char* file)
+{
+  PngLoader loader;
+  loader.load(file);
+
+  glActiveTexture(GL_TEXTURE1);
+
+  glGenTextures(1, &m_texture);
+
+  glBindTexture(GL_TEXTURE_2D, m_texture);
+
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+  // TODO GL_RGBA format to match PNG format
+  glTexImage2D(
+    GL_TEXTURE_2D,
+    0,
+    GL_RGBA,
+    loader.image.width,
+    loader.image.height,
+    0,
+    GL_RGBA,
+    GL_UNSIGNED_BYTE,
+    loader.buffer);
 
   glGenerateMipmap(GL_TEXTURE_2D);
 
   glBindTexture(GL_TEXTURE_2D, m_texture);
 
-  std::cout << "Texture: " << m_texture << std::endl;
-
+  mWidth = loader.image.width;
+  mHeight = loader.image.height;
 }
 
 
 void Texture::loadRaw(const char* file)
 {
-  // FILE* f = fopen(
-  // "data/lowpoly_tree/obj/lightmap.data",
-  // "rb");
-  //
-  // BYTE* data = new BYTE[3*512*512];
-  //
-  // for (int i = 0; i < 512*512; ++i)
-  // {
-  //   BYTE r = ;
-  //   BYTE g = ;
-  //   BYTE b = ;
-  //
-  //   data[3-]
-  // }
   std::ifstream input( file, std::ios::binary );
   // copies all data into buffer
   std::vector<char> buffer((
         std::istreambuf_iterator<char>(input)),
         (std::istreambuf_iterator<char>()));
-
-  //std::cout << (int)buffer[0] << (int)buffer[1] << (int)buffer[2] << std::endl;
 
   glActiveTexture(GL_TEXTURE1);
 
