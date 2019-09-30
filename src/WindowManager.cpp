@@ -55,3 +55,9 @@ int WindowManager::init(const char* title)
 
   return 0;
 }
+
+
+glm::vec4 WindowManager::getViewport()
+{
+  return glm::vec4(0.f, 0.f, (float)width, (float)height);
+}

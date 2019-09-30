@@ -3,6 +3,7 @@
 #include "MeshBank.h"
 #include <stdio.h>
 #include <iostream>
+#include "Palette.h"
 
 
 SceneBatch::SceneBatch()
@@ -30,12 +31,23 @@ void SceneBatch::setProgramName(std::string programName)
 }
 
 
-void SceneBatch::addElement(std::string meshID, glm::mat4 xform, unsigned int attributeSetID)
+void SceneBatch::addElement(std::string meshID, glm::mat4 xform)
 {
   m_programs[m_currentProgramName][meshID].push_back(
     (TransformInfo)
     {
-      xform, attributeSetID
+      xform, NULL, maskID
+    }
+  );
+}
+
+
+void SceneBatch::addElement(std::string meshID, glm::mat4 xform, Palette* palette)
+{
+  m_programs[m_currentProgramName][meshID].push_back(
+    (TransformInfo)
+    {
+      xform, palette, maskID
     }
   );
 }
@@ -43,6 +55,9 @@ void SceneBatch::addElement(std::string meshID, glm::mat4 xform, unsigned int at
 
 void SceneBatch::draw(RenderSystem* rs, MeshBank* mb)
 {
+  glm::vec3 defaultColour = glm::vec3(1);
+  rs->setProgramVec3(/*"diffuse", */defaultColour);
+
   // Each shader program in the queue
   for (auto a : m_programs)
   {
@@ -70,7 +85,23 @@ void SceneBatch::draw(RenderSystem* rs, MeshBank* mb)
         // Each transform for this mesh
         for (auto xform : xformList)
         {
-          rs->drawMesh(xform.xform);
+          // Check the 'id-flag' of this element against our draw mask
+          if (renderMask && renderMask->count(xform.maskID)) // TODO contains c++20
+            continue;
+
+          // Perform a cull test before setting shader vars
+          if (rs->testModelLocal(xform.xform))
+          {
+            // Set diffuse colour for this submesh
+            // TODO - should be optional - ?
+            if (xform.palette)
+              rs->setProgramVec3(/*"diffuse", */xform.palette->getAt(i));
+            else
+              rs->setProgramVec3(/*"diffuse", */defaultColour);
+
+            // Draw the mesh
+            rs->drawMesh();
+          }
         }
       }
     }

@@ -15,6 +15,7 @@ public:
 
   void loadRaw(const char* file);
   void loadPng(const char* file);
+  void loadPng_fromMemory(const char* data, uint64_t numBytes);
   void loadPng_withCollisionShapes(const char* file, TileSet* tileset);
 
   void bind();

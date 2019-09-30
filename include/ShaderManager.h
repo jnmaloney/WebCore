@@ -27,6 +27,8 @@ public:
   // Get Attribute or Uniform value
   unsigned int getAttribute(std::string id);
 
+  void setProgramVec3(glm::vec3& v);  
+
 protected:
 
 

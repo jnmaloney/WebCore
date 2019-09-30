@@ -18,6 +18,7 @@ public:
 
 
   int load(const char* filename);
+  int load_mem(const char* data, uint64_t numBytes);
 
   png_image image; /* The control structure used by libpng */
 

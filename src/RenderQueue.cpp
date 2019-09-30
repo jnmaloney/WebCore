@@ -44,68 +44,68 @@ void RenderQueue::submit()
 
 void RenderQueue::draw(RenderSystem* rs, RenderQueueAnimator* rqa)
 {
-  // For each tile...
-  for (auto const tiles : m_queue)
-  {
-    // Set the tile to be drawn in this pass
-    int t = rqa->getFrame();
-
-    Square& square = m_tiles[t];
-    if (square.m_vbo_vertices == -1) // Initialise
-    {
-      square.x_res = x_res;
-      square.y_res = y_res;
-      int x = t % mod_vert;
-      int y = t / div_vert;
-      square.initVerts(x, y);
-    }
-
-    // For each transform of the current tile...
-    square.bind(rs);
-    for (auto const transforms : tiles.second)
-    {
-      // Set the local transform matrix
-      glUniformMatrix4fv(rs->uniformML, 1, GL_FALSE, &transforms.x[0][0]);
-
-      //
-      //              ----     DRAW     ----
-      //
-      square.draw();
-    }
-  }
+  // // For each tile...
+  // for (auto const tiles : m_queue)
+  // {
+  //   // Set the tile to be drawn in this pass
+  //   int t = rqa->getFrame();
+  //
+  //   Square& square = m_tiles[t];
+  //   if (square.m_vbo_vertices == -1) // Initialise
+  //   {
+  //     square.x_res = x_res;
+  //     square.y_res = y_res;
+  //     int x = t % mod_vert;
+  //     int y = t / div_vert;
+  //     square.initVerts(x, y);
+  //   }
+  //
+  //   // For each transform of the current tile...
+  //   square.bind(rs);
+  //   for (auto const transforms : tiles.second)
+  //   {
+  //     // Set the local transform matrix
+  //     glUniformMatrix4fv(rs->uniformML, 1, GL_FALSE, &transforms.x[0][0]);
+  //
+  //     //
+  //     //              ----     DRAW     ----
+  //     //
+  //     square.draw();
+  //   }
+  // }
 }
 
 
 void RenderQueue::draw(RenderSystem* rs)
 {
-  // For each tile...
-  for (auto const tiles : m_queue)
-  {
-    // Set the tile to be drawn in this pass
-    if (tiles.first == 0) continue;
-    int t = tiles.first - 1;
-
-    Square& square = m_tiles[t];
-    if (square.m_vbo_vertices == -1) // Initialise
-    {
-      square.x_res = x_res;
-      square.y_res = y_res;
-      int x = t % mod_vert;
-      int y = t / div_vert;
-      square.initVerts(x, y);
-    }
-
-    // For each transform of the current tile...
-    square.bind(rs);
-    for (auto const transforms : tiles.second)
-    {
-      // Set the local transform matrix
-      glUniformMatrix4fv(rs->uniformML, 1, GL_FALSE, &transforms.x[0][0]);
-
-      //
-      //              ----     DRAW     ----
-      //
-      square.draw();
-    }
-  }
+  // // For each tile...
+  // for (auto const tiles : m_queue)
+  // {
+  //   // Set the tile to be drawn in this pass
+  //   if (tiles.first == 0) continue;
+  //   int t = tiles.first - 1;
+  //
+  //   Square& square = m_tiles[t];
+  //   if (square.m_vbo_vertices == -1) // Initialise
+  //   {
+  //     square.x_res = x_res;
+  //     square.y_res = y_res;
+  //     int x = t % mod_vert;
+  //     int y = t / div_vert;
+  //     square.initVerts(x, y);
+  //   }
+  //
+  //   // For each transform of the current tile...
+  //   square.bind(rs);
+  //   for (auto const transforms : tiles.second)
+  //   {
+  //     // Set the local transform matrix
+  //     glUniformMatrix4fv(rs->uniformML, 1, GL_FALSE, &transforms.x[0][0]);
+  //
+  //     //
+  //     //              ----     DRAW     ----
+  //     //
+  //     square.draw();
+  //   }
+  // }
 }

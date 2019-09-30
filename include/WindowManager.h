@@ -22,6 +22,8 @@ public:
   float mousex = 0.f;
   float mousey = 0.f;
 
+  glm::vec4 getViewport();
+
 protected:
 
   static WindowManager* s_currentInstance;

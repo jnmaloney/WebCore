@@ -73,6 +73,10 @@ void ShaderManager::loadProgram(std::string id, std::string vert_file, std::stri
   m_shaderAttributes[programObject]["uniformML"] = uniformML;
   m_shaderAttributes[programObject]["uniformVP"] = uniformVP;
 
+  // This is optional
+  m_shaderAttributes[programObject]["uniformDiffuse"] = glGetUniformLocation(programObject, "diffuse");
+
+
 
   m_currentProgram = programObject;
   glUseProgram(m_currentProgram);
@@ -105,4 +109,14 @@ void ShaderManager::update(RenderSystem* rs)
 unsigned int ShaderManager::getAttribute(std::string id)
 {
   return m_shaderAttributes[m_currentProgram][id];
+}
+
+
+void ShaderManager::setProgramVec3(glm::vec3& v)
+{
+  static unsigned int uni = m_shaderAttributes[m_currentProgram]["uniformDiffuse"]; // TODO
+  glUniform3fv(
+    uni,
+    1,
+    &v[0]);
 }

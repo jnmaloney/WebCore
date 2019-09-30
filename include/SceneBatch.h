@@ -5,11 +5,13 @@
 #include <string>
 #include <vector>
 #include <list>
+#include <set>
 #include <graphics.h>
 
 
 class RenderSystem;
 class MeshBank;
+class Palette;
 
 
 // Kind of a replacement for render queue
@@ -25,6 +27,8 @@ public:
   void setMVP(glm::mat4) {} // dummy
   void setDiffuse(glm::vec3) {} // dummy
   void setPallette(std::vector<int>&) {} // dummy
+
+  // Remove everything from the batch
   void clear();
 
   // Execute the queued elements, in efficient order
@@ -35,9 +39,17 @@ public:
 
   void addElement(
     std::string meshID,
-    glm::mat4 xform,
-    unsigned int attributeSetID = 0
+    glm::mat4 xform
   );
+
+  int maskID = 0;
+  void addElement(
+    std::string meshID,
+    glm::mat4 xform,
+    Palette* palette
+  );
+
+  std::set<int>* renderMask = 0;
 
 protected:
 
@@ -45,7 +57,9 @@ protected:
   struct TransformInfo
   {
     glm::mat4 xform;
-    unsigned int attributeSetID = 0; // TODO
+    //unsigned int attributeSetID = 0; // TODO
+    Palette* palette = 0;
+    int maskID = 0;
   };
 
   // A list of transform infos
