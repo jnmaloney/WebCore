@@ -43,6 +43,7 @@ public:
    ALint sample_offset;
    bool save = false;
 
+   double mGain = 0.75;
 
 protected:
 

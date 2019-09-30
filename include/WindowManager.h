@@ -19,6 +19,9 @@ public:
   int width = 200; //800;
   int height = 480; //600;
 
+  float mousex = 0.f;
+  float mousey = 0.f;
+
 protected:
 
   static WindowManager* s_currentInstance;

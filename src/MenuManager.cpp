@@ -47,11 +47,16 @@ void MenuManager::init(WindowManager& window)
   ImGui::StyleColorsLight();
 
   // Load Fonts
-  io.Fonts->AddFontFromFileTTF("data/xkcd-script.ttf", 23.0f);
-  // io.Fonts->AddFontFromFileTTF("data/xkcd-script.ttf", 18.0f);
-  // io.Fonts->AddFontFromFileTTF("data/xkcd-script.ttf", 26.0f);
+  //io.Fonts->AddFontFromFileTTF(fontNameTTF.c_str(), 24.0f);
+  io.Fonts->AddFontFromFileTTF(fontNameTTF.c_str(), 42.0f);
+  //io.Fonts->AddFontFromFileTTF("data/font/CabinSketch-Bold.ttf", 32.0f);
+  //io.Fonts->AddFontFromFileTTF("data/font/Voltaire-Regular.ttf", 23.0f);
+//  io.Fonts->AddFontFromFileTTF("data/xkcd-script.ttf", 18.0f);
+//  io.Fonts->AddFontFromFileTTF("data/xkcd-script.ttf", 26.0f);
   m_headerFont =
-  io.Fonts->AddFontFromFileTTF("data/xkcd-script.ttf", 48.0f);
+  io.Fonts->AddFontFromFileTTF(fontNameTTF.c_str(), 48.0f);
+  //io.Fonts->AddFontFromFileTTF("data/font/CabinSketch-Bold.ttf", 48.0f);
+//  io.Fonts->AddFontFromFileTTF("data/xkcd-script.ttf", 48.0f);
   io.Fonts->AddFontDefault();
 
   imgui =  ImGui::GetCurrentContext();
@@ -59,7 +64,32 @@ void MenuManager::init(WindowManager& window)
   ImGuiStyle& style = ImGui::GetStyle();
   style.FrameBorderSize = 0;
   style.WindowBorderSize = 0;
-  style.Colors[2/*"WindowBg"*/].w = 77.f / 255.f; // alpha
+  style.GrabRounding = 0;
+  style.WindowRounding = 0;
+  style.FrameRounding = 0;
+  style.WindowPadding = ImVec2(0.f, 0.f);
+  style.FramePadding = ImVec2(0.f, 0.f);
+
+  //style.Colors[2/*"WindowBg"*/].w = 77.f / 255.f; // alpha
+  //style.Colors[13/*"MenuBg"*/].w = 77.f / 255.f; // alpha
+
+  // style.Colors[0/*"text"*/].x = 1.f;
+  // style.Colors[0/*"text"*/].y = 1.f;
+  // style.Colors[0/*"text"*/].z = 1.f;
+  style.Colors[2/*"WindowBg"*/].w = 0.f / 255.f; // alpha
+
+  // Adventure Town
+  // style.Colors[ImGuiCol_ButtonActive] = ImVec4(255.0/255.0, 246.0/255.0, 211.0/255.0, 1.0);
+  // style.Colors[ImGuiCol_ButtonHovered] = ImVec4(218.0/255.0, 122.0/255.0, 52.0/255.0, 1.0);
+  // style.Colors[ImGuiCol_Button] = ImVec4(142.0/255.0, 47.0/255.0, 21.0/255.0, 1.0);
+
+  // Space
+  style.Colors[0/*"text"*/] = ImVec4(255.0/255.0, 255.0/255.0, 255.0/255.0, 1.0);
+  style.Colors[ImGuiCol_ButtonActive] = ImVec4(255.0/255.0, 246.0/255.0, 211.0/255.0, 1.0);
+  style.Colors[ImGuiCol_ButtonHovered] = ImVec4(96.0/255.0, 33.0/255.0, 91.0/255.0, 1.0);
+  style.Colors[ImGuiCol_Button] = ImVec4(53.0/255.0, 29.0/255.0, 73.0/255.0, 1.0);
+  style.Colors[ImGuiCol_FrameBg] = ImVec4(96.0/255.0, 33.0/255.0, 91.0/255.0, 1.0);
+
 }
 
 

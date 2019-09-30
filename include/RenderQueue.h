@@ -8,6 +8,7 @@
 
 
 class RenderSystem;
+class RenderQueueAnimator;
 
 
 class  RenderQueue
@@ -20,9 +21,10 @@ public:
   // Execute the queued elements, in efficient order
   void draw(RenderSystem* rs);
 
+  // Execute the queued elements, bonus
+  void draw(RenderSystem* rs, RenderQueueAnimator* rqa);
+
   // Getting ready to submit
-  void setProgram(GLint program);
-  void setMesh(Mesh* mesh);
   void setMVP(glm::mat4 mvp);
   void setTile(int t);
 

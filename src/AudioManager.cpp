@@ -126,7 +126,7 @@ void AudioManager::play(int track, bool loop)
   m_currentTrack = track;
 
   // Play
-  alSourcef(m_tracks[track].source, AL_GAIN, 0.75);
+  alSourcef(m_tracks[track].source, AL_GAIN, mGain);
   alSourcePlay(m_tracks[track].source);
 
   if (loop) alSourcei(m_tracks[track].source, AL_LOOPING, AL_TRUE);
