@@ -1,4 +1,3 @@
-#ifdef USE_BULLET
 #include "TileLevel.h"
 #include "TileSet.h"
 #include "TileMap.h"
@@ -25,6 +24,7 @@ void TileLevel::clear()
 
 void TileLevel::generateCollisionShapes(int x, int y)
 {
+  #ifdef USE_BULLET
   // First calculate the texture shapes
 
   for (auto layer : mMap->layers)
@@ -61,6 +61,7 @@ void TileLevel::generateCollisionShapes(int x, int y)
     //mPhysicsLevel.addTile(0, 0, 0, 0); // ?
     break;
   }
+  #endif
 }
 
 
@@ -88,11 +89,15 @@ void TileLevel::init(const std::string& mapFile, const std::string& pngFile, flo
   // Initialise the Tile Set
   mSet->init(pngFile.c_str(), mMap->tilewidth, mMap->tileheight);
 
+#ifdef USE_BULLET
+
   // Initialise the Physics Level
   mPhysicsLevel.init(gravity);
 
   // Create Tile Shapes
   generateCollisionShapes(mMap->tilewidth, mMap->tileheight);
+
+#endif
 
   // Create Object Entities
   generateObjects();
@@ -108,6 +113,3 @@ void TileLevel::generateObjects()
   //   // new Enemy(&mPhysicsLevel);
   // }
 }
-
-
-#endif

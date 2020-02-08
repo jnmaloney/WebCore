@@ -5,6 +5,7 @@
 #include "WindowManager.h"
 #include "ShaderManager.h"
 #include "Mesh.h"
+#include "Square.h"
 #include "ViewFrustum.h"
 
 
@@ -21,15 +22,21 @@ public:
   void start();
   void end();
 
+  void setClearColour(int r, int g, int b);
+  void setClearColour(float r, float g, float b);
+
+  void setProjectionOrtho(float x, float y, float w, float h);
   void setProjectionPerspective(float hfov_deg, float near = 1.0f, float far = 1.0e6f);
   void setCameraPos(const glm::vec3& pos, const glm::vec3& lookAt, const glm::vec3& up = glm::vec3(0, 0, 1));
 
   float* getViewProj();
 
   // Helpers for drawing
+  void bindSquare(Square* mesh);
   void bindMesh(Mesh* mesh);
   void bindMeshElement(Mesh* mesh, int element);
-  bool testModelLocal(glm::mat4& transform);
+  bool testModelLocal(const glm::mat4& transform);
+  void setModelLocal(const glm::mat4& transform);
   void drawMesh(); //glm::mat4& transform);
 
   // The window that we render to
@@ -58,6 +65,8 @@ protected:
   glm::mat4 View;
   glm::mat4 ViewProj;
   glm::vec3 mCameraPos = glm::vec3(0.f);
+
+  glm::vec3 mClearColour = glm::vec3(142.0/255.0, 47.0/255.0, 21.0/255.0);
 
   ViewFrustum m_frustum;
 };

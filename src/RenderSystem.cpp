@@ -32,13 +32,28 @@ void RenderSystem::init()
     "data/shaders/base.vert",
     "data/shaders/base.frag"
   );
+
+  setProjectionOrtho(0, 0, m_window.width, m_window.height);
+}
+
+
+void RenderSystem::setClearColour(int r, int g, int b)
+{
+  setClearColour(r/255.f, g/255.f, b/255.f);
+}
+
+
+void RenderSystem::setClearColour(float r, float g, float b)
+{
+  mClearColour = glm::vec3(r, g, b);
 }
 
 
 void RenderSystem::start()
 {
   //glClearColor(0.f, 92.f / 255.f, 159.f / 255.f, 1.f); // "Skydiver"
-  glClearColor(142.0/255.0, 47.0/255.0, 21.0/255.0, 1.0); // "Autumn"
+  //glClearColor(142.0/255.0, 47.0/255.0, 21.0/255.0, 1.0); // "Autumn"
+  glClearColor(mClearColour.x, mClearColour.y, mClearColour.z, 1.0);
   glViewport(0, 0, m_window.width, m_window.height);
   glClear( GL_COLOR_BUFFER_BIT );
 
@@ -77,6 +92,13 @@ void RenderSystem::setProjectionPerspective(float hfov_deg, float near, float fa
 }
 
 
+void RenderSystem::setProjectionOrtho(float x, float y, float w, float h)
+{
+  Projection = glm::ortho( x-w/2, x+w/2, y+h/2, y-h/2, -1000.f, 1000.f );
+  ViewProj = Projection * View;
+}
+
+
 void RenderSystem::setCameraPos(const glm::vec3& pos, const glm::vec3& lookAt, const glm::vec3& up)
 {
   //
@@ -111,6 +133,41 @@ void RenderSystem::end()
 float* RenderSystem::getViewProj()
 {
   return &ViewProj[0][0];
+}
+
+
+void RenderSystem::bindSquare(Square* square)
+{
+  square->bind(this);
+  // GLuint attribute_v_coord = m_shaderManager.getAttribute("attribute_v_coord");
+  // GLuint attribute_v_uv = m_shaderManager.getAttribute("attribute_v_uv");
+  //
+  // // Vertex position
+  // glEnableVertexAttribArray(attribute_v_coord);
+  // glBindBuffer(GL_ARRAY_BUFFER, square->m_vbo_vertices); // TODO
+  // glVertexAttribPointer(
+  //   attribute_v_coord,  // attribute
+  //   4,                  // number of elements per vertex, here (x,y,z,w)
+  //   GL_FLOAT,           // the type of each element
+  //   GL_FALSE,           // take our values as-is
+  //   0,                  // no extra data between each position
+  //   0                   // offset of first element
+  // );
+  //
+  // // Vertex UV
+  // glEnableVertexAttribArray(attribute_v_uv);
+  // glBindBuffer(GL_ARRAY_BUFFER, square->m_vbo_uvs); // TODO
+  // glVertexAttribPointer(
+  //   attribute_v_uv,     // attribute
+  //   2,                  // number of elements per vertex, here (x,y,z)
+  //   GL_FLOAT,           // the type of each element
+  //   GL_FALSE,           // take our values as-is
+  //   0,                  // no extra data between each position
+  //   0                   // offset of first element
+  // );
+  //
+  // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, square->m_ibo_elements);
+  m_triangleDrawSize = 6;
 }
 
 
@@ -159,11 +216,11 @@ void RenderSystem::bindMeshElement(Mesh* mesh, int element)
 }
 
 
-bool RenderSystem::testModelLocal(glm::mat4& transform)
+bool RenderSystem::testModelLocal(const glm::mat4& transform)
 {
   // Frustum test first
   glm::vec3 p = glm::vec3(transform[3]);
-  //if (m_frustum.testSphere(p, 1.0f) < 0) return false;
+  if (m_frustum.testSphere(p, 1.0f) < 0) return false;
 
   // TODO
   static GLuint uniformML = m_shaderManager.getAttribute("uniformML");
@@ -172,6 +229,19 @@ bool RenderSystem::testModelLocal(glm::mat4& transform)
   glUniformMatrix4fv(uniformML, 1, GL_FALSE, &transform[0][0]);
 
   return true;
+}
+
+
+void RenderSystem::setModelLocal(const glm::mat4& transform)
+{
+  // Frustum test first
+  glm::vec3 p = glm::vec3(transform[3]);
+
+  // TODO
+  static GLuint uniformML = m_shaderManager.getAttribute("uniformML");
+
+  // Transform Model-Local
+  glUniformMatrix4fv(uniformML, 1, GL_FALSE, &transform[0][0]);
 }
 
 

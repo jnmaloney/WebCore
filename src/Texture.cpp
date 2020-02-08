@@ -101,9 +101,14 @@ void Texture::loadPng(const char* file)
   PngLoader loader;
   loader.load(file);
 
+  std::cout << "Loader: " << loader.x << " " << loader.y << std::endl;
+
   glActiveTexture(GL_TEXTURE1);
 
   glGenTextures(1, &m_texture);
+
+  std::cout << "Texture: " << m_texture << std::endl;
+
 
   glBindTexture(GL_TEXTURE_2D, m_texture);
 

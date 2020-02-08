@@ -1,11 +1,12 @@
 #pragma once
-#ifdef 0
 
 
 #include "graphics.h"
 #include <string>
 #include <vector>
+#ifdef USE_BULLET
 #include "PhysicsLevel2D.h"
+#endif
 
 
 class Texture;
@@ -26,7 +27,9 @@ public:
       const std::string& pngFile,
       float gravity);
 
+    #ifdef USE_BULLET
     PhysicsLevel2D mPhysicsLevel;
+    #endif
 
     TileMap* getMap() { return mMap; }
     TileSet* getSet() { return mSet; }
@@ -43,5 +46,3 @@ public:
     TileMap* mMap = 0; // The map
 
 };
-
-#endif

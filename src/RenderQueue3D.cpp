@@ -59,4 +59,16 @@ void RenderQueue3D::draw(RenderSystem* rs)
     m_mesh->draw();
   }
   */
+
+  // - NEW -
+  for (auto const t : m_transforms)
+  {
+    rs->bindMesh(m_mesh);
+    rs->bindMeshElement(m_mesh, 0);
+    //g_texArray[i][j]->bind();
+    if (rs->testModelLocal(t.x))
+    {
+      rs->drawMesh();
+    }
+  }
 }

@@ -20,7 +20,7 @@ public:
 
   //void draw(WindowManager& window);
   void predraw();
-  void postdraw(WindowManager& window);
+  void postdraw();
 
   ImGuiContext* imgui = 0;
 
@@ -29,6 +29,9 @@ public:
   ImFont* m_headerFont = 0;
 
   std::string fontNameTTF = "data/font/your-quota.ttf";
+
+  void setDefaultStyle();
+  void setStyleSheet(const char* sheet);
 
 protected:
   void window_display();

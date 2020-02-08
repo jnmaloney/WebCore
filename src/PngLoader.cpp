@@ -101,6 +101,7 @@ int PngLoader::load_mem(const char* data, unsigned int numBytes)
 
 int PngLoader::load(const char* filename)
 {
+  // std::cout << "PNG load: " << filename << std::endl;
   if (png_image_begin_read_from_file(&image, filename) != 0)
   {
      /* Set the format in which to read the PNG file; this code chooses a
@@ -115,6 +116,9 @@ int PngLoader::load(const char* filename)
       */
      size = PNG_IMAGE_SIZE(image);
      buffer = (png_bytep)malloc(size);
+
+     x = image.width;
+     y = image.height;
 
      /* If enough memory was available read the image in the desired format
       * then write the result out to the new file.  'background' is not
@@ -183,5 +187,6 @@ int PngLoader::load(const char* filename)
    * textual message in the 'png_image' structure:
    */
   fprintf(stderr, "png error: %s\n", image.message);
+  // std::cout << "PNG error: " << image.message << std::endl;
   return 0;
 }

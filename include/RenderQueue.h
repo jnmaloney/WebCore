@@ -18,11 +18,14 @@ public:
   RenderQueue();
   ~RenderQueue();
 
+  void setSheet(int x, int y);
+
   // Execute the queued elements, in efficient order
   void draw(RenderSystem* rs);
 
   // Execute the queued elements, bonus
   void draw(RenderSystem* rs, RenderQueueAnimator* rqa);
+  void draw(RenderSystem* rs, float px, float py);
 
   // Getting ready to submit
   void setMVP(glm::mat4 mvp);
