@@ -163,7 +163,7 @@ bool RenderSystem::testModelLocal(glm::mat4& transform)
 {
   // Frustum test first
   glm::vec3 p = glm::vec3(transform[3]);
-  if (m_frustum.testSphere(p, 1.0f) < 0) return false;
+  //if (m_frustum.testSphere(p, 1.0f) < 0) return false;
 
   // TODO
   static GLuint uniformML = m_shaderManager.getAttribute("uniformML");
@@ -177,6 +177,8 @@ bool RenderSystem::testModelLocal(glm::mat4& transform)
 
 void RenderSystem::drawMesh() //glm::mat4& transform)
 {
+  // printf("[tris: %i]    \n", m_triangleDrawSize);
+
   // Draw call (one submesh)
   glDrawElements(GL_TRIANGLES, m_triangleDrawSize, GL_UNSIGNED_SHORT, 0);
 }

@@ -18,12 +18,14 @@ public:
 
 
   int load(const char* filename);
-  int load_mem(const char* data, uint64_t numBytes);
+  int load_mem(const char* data, unsigned int numBytes);
 
   png_image image; /* The control structure used by libpng */
 
   /* Image data */
-  png_bytep buffer = 0;
+  png_bytep buffer = 0;//unsigned char*
   size_t size = 0;
 
+  int x = 0;
+  int y = 0;
 };

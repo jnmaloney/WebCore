@@ -19,7 +19,7 @@ PngLoader::~PngLoader()
 }
 
 
-int PngLoader::load_mem(const char* data, uint64_t numBytes)
+int PngLoader::load_mem(const char* data, unsigned int numBytes)
 {
   if (png_image_begin_read_from_memory(&image, data, numBytes) != 0)
   {
@@ -35,6 +35,9 @@ int PngLoader::load_mem(const char* data, uint64_t numBytes)
       */
      size = PNG_IMAGE_SIZE(image);
      buffer = (png_bytep)malloc(size);
+
+     x = image.width;
+     y = image.height;
 
      /* If enough memory was available read the image in the desired format
       * then write the result out to the new file.  'background' is not

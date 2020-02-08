@@ -41,8 +41,8 @@ void Texture::loadPng_withCollisionShapes(const char* file, TileSet* tileset)
     GL_TEXTURE_2D,
     0,
     GL_RGBA,
-    loader.image.width,
-    loader.image.height,
+    loader.x,
+    loader.y,
     0,
     GL_RGBA,
     GL_UNSIGNED_BYTE,
@@ -58,7 +58,7 @@ void Texture::loadPng_fromMemory(const char* data, uint64_t numBytes)
 {
   if (m_texture)
   {
-    glGenTextures(1, &m_texture);    
+    glGenTextures(1, &m_texture);
   }
 
   PngLoader loader;
@@ -80,8 +80,8 @@ void Texture::loadPng_fromMemory(const char* data, uint64_t numBytes)
     GL_TEXTURE_2D,
     0,
     GL_RGBA,
-    loader.image.width,
-    loader.image.height,
+    loader.x,
+    loader.y,
     0,
     GL_RGBA,
     GL_UNSIGNED_BYTE,
@@ -91,8 +91,8 @@ void Texture::loadPng_fromMemory(const char* data, uint64_t numBytes)
 
   glBindTexture(GL_TEXTURE_2D, m_texture);
 
-  mWidth = loader.image.width;
-  mHeight = loader.image.height;
+  mWidth = loader.x;
+  mHeight = loader.y;
 }
 
 
@@ -117,8 +117,8 @@ void Texture::loadPng(const char* file)
     GL_TEXTURE_2D,
     0,
     GL_RGBA,
-    loader.image.width,
-    loader.image.height,
+    loader.x,
+    loader.y,
     0,
     GL_RGBA,
     GL_UNSIGNED_BYTE,
@@ -128,8 +128,8 @@ void Texture::loadPng(const char* file)
 
   glBindTexture(GL_TEXTURE_2D, m_texture);
 
-  mWidth = loader.image.width;
-  mHeight = loader.image.height;
+  mWidth = loader.x;
+  mHeight = loader.y;
 }
 
 
