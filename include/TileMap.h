@@ -50,6 +50,13 @@ public:
 
     int height = 0;
     int width = 0;
+<<<<<<< HEAD
+    // const int tileheight = 32;
+    // const int tilewidth = 32;
+    int tileheight = 16;
+    int tilewidth = 16;
+=======
     const int tileheight = 32;
     const int tilewidth = 32;
+>>>>>>> 51cef8f22afefb184093a34d45f0818a38d0d2d5
 };

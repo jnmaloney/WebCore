@@ -27,6 +27,10 @@ public:
   void cursor_pos_callback(double xpos, double ypos);
   void mouse_button_callback(int button, int action, int mods);
   void scroll_callback(double xoffset, double yoffset);
+<<<<<<< HEAD
+  void key_callback(int key, int scancode, int action, int mods);
+=======
+>>>>>>> 51cef8f22afefb184093a34d45f0818a38d0d2d5
 
   void update(double dt);
 

@@ -206,14 +206,22 @@ void TileMap::loadTMX_Base64(const std::string& filename)
 
             if (tilewidth == 0)
             {
+<<<<<<< HEAD
+              tilewidth = std::atoi(line.substr(s1 + 1, s2 - s1 - 1).c_str());
+=======
 //              tilewidth = std::atoi(line.substr(s1 + 1, s2 - s1 - 1).c_str());
+>>>>>>> 51cef8f22afefb184093a34d45f0818a38d0d2d5
               search_token="tileheight=";
               continue;
             }
 
             if (tileheight == 0)
             {
+<<<<<<< HEAD
+              tileheight = std::atoi(line.substr(s1 + 1, s2 - s1 - 1).c_str());
+=======
 //              tileheight = std::atoi(line.substr(s1 + 1, s2 - s1 - 1).c_str());
+>>>>>>> 51cef8f22afefb184093a34d45f0818a38d0d2d5
               search_token="<object id=";
               continue;
             }

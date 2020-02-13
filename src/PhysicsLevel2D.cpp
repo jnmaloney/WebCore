@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+#define USE_BULLET 1
+=======
+>>>>>>> 51cef8f22afefb184093a34d45f0818a38d0d2d5
 #ifdef USE_BULLET
 #include "PhysicsLevel2D.h"
 #include <stdio.h>
@@ -14,6 +18,141 @@ const int CONTACT_2 = 32;
 //const int PICKUP = 16;
 
 
+<<<<<<< HEAD
+std::vector<float> PhysicsLevel2D::contactTop = {0, 0};
+std::vector<float> PhysicsLevel2D::contactBottom = {0, 0};
+std::vector<float> PhysicsLevel2D::contactLeft = {0, 0};
+std::vector<float> PhysicsLevel2D::contactRight = {0, 0};
+int PhysicsLevel2D::mCallbacksThisFrame = 0;
+void addPtTop(float pt)
+{
+  if (pt < PhysicsLevel2D::contactTop[0])
+  {
+    PhysicsLevel2D::contactTop[0] = pt;
+  }
+  if (pt > PhysicsLevel2D::contactTop[1])
+  {
+    PhysicsLevel2D::contactTop[1] = pt;
+  }
+}
+
+void addPtBottom(float pt)
+{
+  if (pt < PhysicsLevel2D::contactBottom[0])
+  {
+    PhysicsLevel2D::contactBottom[0] = pt;
+  }
+  if (pt > PhysicsLevel2D::contactBottom[1])
+  {
+    PhysicsLevel2D::contactBottom[1] = pt;
+  }
+}
+
+void addPtLeft(float pt)
+{
+  if (pt < PhysicsLevel2D::contactLeft[0])
+  {
+    PhysicsLevel2D::contactLeft[0] = pt;
+  }
+  if (pt > PhysicsLevel2D::contactLeft[1])
+  {
+    PhysicsLevel2D::contactLeft[1] = pt;
+  }
+}
+
+void addPtRight(float pt)
+{
+  if (pt < PhysicsLevel2D::contactRight[0])
+  {
+    PhysicsLevel2D::contactRight[0] = pt;
+  }
+  if (pt > PhysicsLevel2D::contactRight[1])
+  {
+    PhysicsLevel2D::contactRight[1] = pt;
+  }
+}
+
+
+void btNearCallback_custom(btBroadphasePair& collisionPair, btCollisionDispatcher& dispatcher, const btDispatcherInfo& dispatchInfo)
+{
+  btCollisionObject* colObj0 = (btCollisionObject*)collisionPair.m_pProxy0->m_clientObject;
+  btCollisionObject* colObj1 = (btCollisionObject*)collisionPair.m_pProxy1->m_clientObject;
+
+  if (PhysicsLevel2D::mCallbacksThisFrame == 0)
+  {
+    PhysicsLevel2D::contactTop[0] = FLT_MAX;
+    PhysicsLevel2D::contactTop[1] = FLT_MIN;
+    PhysicsLevel2D::contactBottom[0] = FLT_MAX;
+    PhysicsLevel2D::contactBottom[1] = FLT_MIN;
+    PhysicsLevel2D::contactLeft[0] = FLT_MAX;
+    PhysicsLevel2D::contactLeft[1] = FLT_MIN;
+    PhysicsLevel2D::contactRight[0] = FLT_MAX;
+    PhysicsLevel2D::contactRight[1] = FLT_MIN;
+  }
+  ++PhysicsLevel2D::mCallbacksThisFrame;
+
+  if (dispatcher.needsCollision(colObj0, colObj1))
+  {
+    btCollisionObjectWrapper obj0Wrap(0, colObj0->getCollisionShape(), colObj0, colObj0->getWorldTransform(), -1, -1);
+    btCollisionObjectWrapper obj1Wrap(0, colObj1->getCollisionShape(), colObj1, colObj1->getWorldTransform(), -1, -1);
+
+    //dispatcher will keep algorithms persistent in the collision pair
+    if (!collisionPair.m_algorithm)
+    {
+      collisionPair.m_algorithm = dispatcher.findAlgorithm(&obj0Wrap, &obj1Wrap, 0/*, BT_CONTACT_POINT_ALGORITHMS*/);
+    }
+
+    if (collisionPair.m_algorithm)
+    {
+      btManifoldResult contactPointResult(&obj0Wrap, &obj1Wrap);
+
+      if (dispatchInfo.m_dispatchFunc == btDispatcherInfo::DISPATCH_DISCRETE)
+      {
+        //discrete collision detection query
+        collisionPair.m_algorithm->processCollision(&obj0Wrap, &obj1Wrap, dispatchInfo, &contactPointResult);
+      }
+      else
+      {
+        //continuous collision detection query, time of impact (toi)
+        btScalar toi = collisionPair.m_algorithm->calculateTimeOfImpact(colObj0, colObj1, dispatchInfo, &contactPointResult);
+        if (dispatchInfo.m_timeOfImpact > toi)
+          dispatchInfo.m_timeOfImpact = toi;
+      }
+
+      if (colObj1->getUserPointer() == (void*)1)
+      {
+        btPersistentManifold* manifoldPtr = contactPointResult.getPersistentManifold();
+        int n = manifoldPtr->getNumContacts();
+        for (int i = 0; i < n; ++i)
+        {
+          btManifoldPoint& point = manifoldPtr->getContactPoint(i);
+          btVector3 p = point.getPositionWorldOnB();
+
+          if (point.m_normalWorldOnB.x() > 0.9)
+          {
+            addPtRight(p.y());
+          }
+          if (point.m_normalWorldOnB.x() < -0.9)
+          {
+            addPtLeft(p.y());
+          }
+          if (point.m_normalWorldOnB.y() > 0.9)
+          {
+            addPtTop(p.x());
+          }
+          if (point.m_normalWorldOnB.y() < -0.9)
+          {
+            addPtBottom(p.x());
+          }
+        }
+      }
+    }
+  }
+}
+
+
+=======
+>>>>>>> 51cef8f22afefb184093a34d45f0818a38d0d2d5
 
 PhysicsLevel2D::PhysicsLevel2D()
 {
@@ -53,6 +192,10 @@ void PhysicsLevel2D::init(float gravity)
 
 	///use the default collision dispatcher. For parallel processing you can use a diffent dispatcher (see Extras/BulletMultiThreaded)
 	m_dispatcher = new btCollisionDispatcher(m_collisionConfiguration);
+<<<<<<< HEAD
+  m_dispatcher->setNearCallback(&btNearCallback_custom);
+=======
+>>>>>>> 51cef8f22afefb184093a34d45f0818a38d0d2d5
 
 	m_simplexSolver = new btVoronoiSimplexSolver();
 	m_pdSolver = new btMinkowskiPenetrationDepthSolver();
@@ -234,6 +377,10 @@ void PhysicsLevel2D::addDynamic(int x, int y, int w, int h)
 		btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, boxShape, localInertia);
 		rbInfo.m_friction = btScalar(0);
 		btRigidBody* body = new btRigidBody(rbInfo);
+<<<<<<< HEAD
+    body->setUserPointer( (void*)1 );
+=======
+>>>>>>> 51cef8f22afefb184093a34d45f0818a38d0d2d5
 		// btGhostObject* body = new btPairCachingGhostObject();
 		// body->setCollisionShape(boxShape);
 		// body->setWorldTransform(groundTransform);
@@ -308,6 +455,22 @@ void PhysicsLevel2D::getDynamicPosition(float* x, float* y)
 
 void PhysicsLevel2D::step(double dt)
 {
+<<<<<<< HEAD
+  if (PhysicsLevel2D::mCallbacksThisFrame == 0)
+  {
+    PhysicsLevel2D::contactTop[0] = FLT_MAX;
+    PhysicsLevel2D::contactTop[1] = FLT_MIN;
+    PhysicsLevel2D::contactBottom[0] = FLT_MAX;
+    PhysicsLevel2D::contactBottom[1] = FLT_MIN;
+    PhysicsLevel2D::contactLeft[0] = FLT_MAX;
+    PhysicsLevel2D::contactLeft[1] = FLT_MIN;
+    PhysicsLevel2D::contactRight[0] = FLT_MAX;
+    PhysicsLevel2D::contactRight[1] = FLT_MIN;
+  }
+  PhysicsLevel2D::mCallbacksThisFrame = 0; // Collision
+
+=======
+>>>>>>> 51cef8f22afefb184093a34d45f0818a38d0d2d5
 	if (m_dynamicsWorld)
 	{
 		m_dynamicsWorld->stepSimulation(dt, 0);
@@ -343,7 +506,12 @@ void PhysicsLevel2D::jumpDynamic()
 {
 	double x = 0;
 	//double y = 5200;
+<<<<<<< HEAD
+	//double y = -3900;
+  double y = -6400;
+=======
 	double y = -3900;
+>>>>>>> 51cef8f22afefb184093a34d45f0818a38d0d2d5
 	double z = 0;
 	// y *= 2;
 	//m_dynamicBody->applyCentralForce(btVector3(x, y, z));
@@ -351,6 +519,22 @@ void PhysicsLevel2D::jumpDynamic()
 }
 
 
+<<<<<<< HEAD
+void PhysicsLevel2D::jumpDynamicWall(int i)
+{
+	double x = 3200 * i;
+	//double y = 5200;
+	//double y = -3900;
+  double y = -3200;
+	double z = 0;
+	// y *= 2;
+	//m_dynamicBody->applyCentralForce(btVector3(x, y, z));
+	m_dynamicBody->applyCentralImpulse(btVector3(x / 30.0, y / 30.0, z));
+}
+
+
+=======
+>>>>>>> 51cef8f22afefb184093a34d45f0818a38d0d2d5
 void PhysicsLevel2D::jumpDynamicHold(float dt)
 {
 	// double y0 = m_dynamicBody->getLinearVelocity().y();

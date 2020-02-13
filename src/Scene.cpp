@@ -57,6 +57,18 @@ void Scene::scroll_callback(double xoffset, double yoffset)
 }
 
 
+<<<<<<< HEAD
+void Scene::key_callback(int key, int scancode, int action, int mods)
+{
+  for (auto& i : m_elements)
+  {
+    i->key_callback(key, scancode, action, mods);
+  }
+}
+
+
+=======
+>>>>>>> 51cef8f22afefb184093a34d45f0818a38d0d2d5
 void Scene::update(double dt)
 {
   for (auto& i : m_elements)

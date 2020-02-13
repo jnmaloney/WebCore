@@ -1,4 +1,8 @@
 #pragma once
+<<<<<<< HEAD
+#define USE_BULLET 1
+=======
+>>>>>>> 51cef8f22afefb184093a34d45f0818a38d0d2d5
 
 
 #include "graphics.h"
@@ -12,6 +16,10 @@
 class Texture;
 class TileSet;
 class TileMap;
+<<<<<<< HEAD
+class RenderQueue;
+=======
+>>>>>>> 51cef8f22afefb184093a34d45f0818a38d0d2d5
 
 
 class TileLevel
@@ -34,6 +42,11 @@ public:
     TileMap* getMap() { return mMap; }
     TileSet* getSet() { return mSet; }
 
+<<<<<<< HEAD
+    void createRenderQueue(RenderQueue* a_queue);
+
+=======
+>>>>>>> 51cef8f22afefb184093a34d45f0818a38d0d2d5
   protected:
 
     void generateCollisionShapes(int x, int y);

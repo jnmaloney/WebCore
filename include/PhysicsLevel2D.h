@@ -39,10 +39,29 @@ public:
   void dynamicZoom();
   void normalGravity();
   void jumpDynamic();
+<<<<<<< HEAD
+  void jumpDynamicWall(int i);
+=======
+>>>>>>> 51cef8f22afefb184093a34d45f0818a38d0d2d5
   void jumpDynamicHold(float dt);
   void contactPoints(bool*, bool*, bool*, bool*);
   btScalar getDynamicYDir();
 
+<<<<<<< HEAD
+  // TODO
+  void freezeDynamic() {}
+  void unfreezeDynamic() {}
+  void jumpDynamic(float x) {}
+  void addDynamicImpulse(float d, int mode) {}
+  void jumpLaunchDynamic(float d) {}
+  static std::vector<float> contactTop;
+  static std::vector<float> contactBottom;
+  static std::vector<float> contactLeft;
+  static std::vector<float> contactRight;
+  static int mCallbacksThisFrame;
+
+=======
+>>>>>>> 51cef8f22afefb184093a34d45f0818a38d0d2d5
   // A space that tracks being touched by objects
   void addTrigger(int x_min, int x_max, int y_min, int y_max);
   bool isTrigger(int i);

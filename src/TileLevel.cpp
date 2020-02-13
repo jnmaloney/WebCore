@@ -2,6 +2,10 @@
 #include "TileSet.h"
 #include "TileMap.h"
 #include <iostream>
+<<<<<<< HEAD
+#include "RenderQueue.h"
+=======
+>>>>>>> 51cef8f22afefb184093a34d45f0818a38d0d2d5
 
 
 TileLevel::TileLevel()
@@ -46,7 +50,12 @@ void TileLevel::generateCollisionShapes(int x, int y)
         int y_off = j * mMap->tileheight;
 
         // Collision shape for the tile
+<<<<<<< HEAD
+        //TileSet::Rect r = mSet->getCollisionShape(id);
+        TileSet::Rect r = {0.f, 0.f, 16.f, 16.f};
+=======
         TileSet::Rect r = mSet->getCollisionShape(id);
+>>>>>>> 51cef8f22afefb184093a34d45f0818a38d0d2d5
 
         // Offset Rect to tile position
         r.x_min += x_off;
@@ -113,3 +122,47 @@ void TileLevel::generateObjects()
   //   // new Enemy(&mPhysicsLevel);
   // }
 }
+<<<<<<< HEAD
+
+
+void TileLevel::createRenderQueue(RenderQueue* a_queue)
+{
+  if (a_queue == 0) return;
+  RenderQueue& queue = *a_queue;
+
+  TileMap* tilemap = mMap;
+  queue.clear();
+  int z = 0;
+  for (int i = 0; i < tilemap->width; ++i)
+  {
+    for (int j = 0; j < tilemap->height; ++j)
+    {
+      glm::mat4 mvp(1.0);
+
+      mvp = glm::translate(mvp,
+        glm::vec3(
+          i * tilemap->tilewidth,
+          j * tilemap->tileheight,
+          z));
+
+      mvp = glm::scale(mvp,
+        glm::vec3(
+          tilemap->tilewidth,
+          tilemap->tileheight,
+          1));
+
+      int t = i + tilemap->width * j;
+      int u = tilemap->layers[0].data[t];
+      //std::cout << u << std::endl;
+      if (u != 0)
+      {
+        // stamp
+        queue.setTile(u);
+        queue.setMVP(mvp);
+        queue.submit();
+      }
+    }
+  }
+}
+=======
+>>>>>>> 51cef8f22afefb184093a34d45f0818a38d0d2d5
