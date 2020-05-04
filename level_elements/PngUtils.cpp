@@ -16,7 +16,7 @@ PngUtils::~PngUtils()
 
 
 void PngUtils::prepareCollisionShapes(PngLoader* loader, TileSet* tileset)
-{/*
+{
   //
   // Tile iterator
   //
@@ -60,5 +60,5 @@ void PngUtils::prepareCollisionShapes(PngLoader* loader, TileSet* tileset)
       //std::cout << r.x_min << ", " << r.y_min << " | " << r.x_max << ", " << r.y_max << std::endl;
       tileset->mCollisionShapes.push_back(r);
     }
-  }*/
+  }
 }

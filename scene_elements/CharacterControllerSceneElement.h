@@ -1,5 +1,5 @@
 #pragma once
-
+#ifdef 0
 
 #include "SceneElement.h"
 #include "PhysicsLevel2D.h"
@@ -43,3 +43,5 @@ protected:
 
   PhysicsLevel2D* m_level = 0;
 };
+
+#endif

@@ -1,3 +1,4 @@
+#ifdef 0
 #include "CharacterControllerSceneElement.h"
 #include "RenderSystem.h"
 
@@ -38,8 +39,6 @@ void CharacterControllerSceneElement::update(double dt)
       m_level->jumpDynamic();
       m_state.mJump = false;
     }
-    // m_level->jumpDynamic();
-    // m_state.mJump = false;
   }
 
   if (m_state.mRight)
@@ -98,3 +97,5 @@ void CharacterControllerSceneElement::key_callback(int key, int scancode, int ac
     }
   }
 }
+
+#endif

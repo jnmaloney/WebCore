@@ -3,7 +3,7 @@
 #include <vector>
 #include <iostream>
 #include "PngLoader.h"
-#include "PngUtils.h"
+#include "../level_elements/PngUtils.h"
 
 
 Texture::Texture()
@@ -14,7 +14,7 @@ Texture::Texture()
 
 Texture::~Texture()
 {
-
+  if (m_texture) glDeleteTextures(1, &m_texture);
 }
 
 

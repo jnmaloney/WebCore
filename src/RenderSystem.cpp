@@ -32,6 +32,11 @@ void RenderSystem::init()
     "data/shaders/base.vert",
     "data/shaders/base.frag"
   );
+  // m_shaderManager.loadProgram(
+  //   "Default",
+  //   "data/shaders/g0.vert",
+  //   "data/shaders/g0.frag"
+  // );
 
   setProjectionOrtho(0, 0, m_window.width, m_window.height);
 }
@@ -234,7 +239,6 @@ bool RenderSystem::testModelLocal(const glm::mat4& transform)
 
 void RenderSystem::setModelLocal(const glm::mat4& transform)
 {
-  // Frustum test first
   glm::vec3 p = glm::vec3(transform[3]);
 
   // TODO
@@ -245,10 +249,8 @@ void RenderSystem::setModelLocal(const glm::mat4& transform)
 }
 
 
-void RenderSystem::drawMesh() //glm::mat4& transform)
+void RenderSystem::drawMesh()
 {
-  // printf("[tris: %i]    \n", m_triangleDrawSize);
-
   // Draw call (one submesh)
   glDrawElements(GL_TRIANGLES, m_triangleDrawSize, GL_UNSIGNED_SHORT, 0);
 }

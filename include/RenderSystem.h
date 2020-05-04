@@ -69,4 +69,9 @@ protected:
   glm::vec3 mClearColour = glm::vec3(142.0/255.0, 47.0/255.0, 21.0/255.0);
 
   ViewFrustum m_frustum;
+
+  // G-buffer
+  //GLuint* m_colBuffer;
+  //GLuint* m_norBuffer;
+  //GLuint* m_posBuffer;
 };

@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 #define USE_BULLET 1
-=======
->>>>>>> 51cef8f22afefb184093a34d45f0818a38d0d2d5
 #ifdef USE_BULLET
 #include "PhysicsLevel2D.h"
 #include <stdio.h>
@@ -18,7 +15,6 @@ const int CONTACT_2 = 32;
 //const int PICKUP = 16;
 
 
-<<<<<<< HEAD
 std::vector<float> PhysicsLevel2D::contactTop = {0, 0};
 std::vector<float> PhysicsLevel2D::contactBottom = {0, 0};
 std::vector<float> PhysicsLevel2D::contactLeft = {0, 0};
@@ -151,8 +147,6 @@ void btNearCallback_custom(btBroadphasePair& collisionPair, btCollisionDispatche
 }
 
 
-=======
->>>>>>> 51cef8f22afefb184093a34d45f0818a38d0d2d5
 
 PhysicsLevel2D::PhysicsLevel2D()
 {
@@ -192,10 +186,7 @@ void PhysicsLevel2D::init(float gravity)
 
 	///use the default collision dispatcher. For parallel processing you can use a diffent dispatcher (see Extras/BulletMultiThreaded)
 	m_dispatcher = new btCollisionDispatcher(m_collisionConfiguration);
-<<<<<<< HEAD
   m_dispatcher->setNearCallback(&btNearCallback_custom);
-=======
->>>>>>> 51cef8f22afefb184093a34d45f0818a38d0d2d5
 
 	m_simplexSolver = new btVoronoiSimplexSolver();
 	m_pdSolver = new btMinkowskiPenetrationDepthSolver();
@@ -377,10 +368,7 @@ void PhysicsLevel2D::addDynamic(int x, int y, int w, int h)
 		btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, boxShape, localInertia);
 		rbInfo.m_friction = btScalar(0);
 		btRigidBody* body = new btRigidBody(rbInfo);
-<<<<<<< HEAD
     body->setUserPointer( (void*)1 );
-=======
->>>>>>> 51cef8f22afefb184093a34d45f0818a38d0d2d5
 		// btGhostObject* body = new btPairCachingGhostObject();
 		// body->setCollisionShape(boxShape);
 		// body->setWorldTransform(groundTransform);
@@ -455,7 +443,6 @@ void PhysicsLevel2D::getDynamicPosition(float* x, float* y)
 
 void PhysicsLevel2D::step(double dt)
 {
-<<<<<<< HEAD
   if (PhysicsLevel2D::mCallbacksThisFrame == 0)
   {
     PhysicsLevel2D::contactTop[0] = FLT_MAX;
@@ -469,8 +456,6 @@ void PhysicsLevel2D::step(double dt)
   }
   PhysicsLevel2D::mCallbacksThisFrame = 0; // Collision
 
-=======
->>>>>>> 51cef8f22afefb184093a34d45f0818a38d0d2d5
 	if (m_dynamicsWorld)
 	{
 		m_dynamicsWorld->stepSimulation(dt, 0);
@@ -506,12 +491,8 @@ void PhysicsLevel2D::jumpDynamic()
 {
 	double x = 0;
 	//double y = 5200;
-<<<<<<< HEAD
 	//double y = -3900;
   double y = -6400;
-=======
-	double y = -3900;
->>>>>>> 51cef8f22afefb184093a34d45f0818a38d0d2d5
 	double z = 0;
 	// y *= 2;
 	//m_dynamicBody->applyCentralForce(btVector3(x, y, z));
@@ -519,7 +500,6 @@ void PhysicsLevel2D::jumpDynamic()
 }
 
 
-<<<<<<< HEAD
 void PhysicsLevel2D::jumpDynamicWall(int i)
 {
 	double x = 3200 * i;
@@ -533,8 +513,6 @@ void PhysicsLevel2D::jumpDynamicWall(int i)
 }
 
 
-=======
->>>>>>> 51cef8f22afefb184093a34d45f0818a38d0d2d5
 void PhysicsLevel2D::jumpDynamicHold(float dt)
 {
 	// double y0 = m_dynamicBody->getLinearVelocity().y();
@@ -696,6 +674,57 @@ btCollisionObject* PhysicsLevel2D::addPickup(int x_min, int x_max, int y_min, in
 		btDefaultMotionState* myMotionState = new btDefaultMotionState(groundTransform);
 		btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, boxShape, localInertia);
 		rbInfo.m_friction = btScalar(1.0);
+		btRigidBody* body = new btRigidBody(rbInfo);
+
+		body->setLinearFactor(btVector3(1, 1, 0));
+		body->setAngularFactor(btVector3(0, 0, 0));
+
+		//	add the body to the dynamics world
+		m_dynamicsWorld->addRigidBody(body);
+
+		body->setActivationState(DISABLE_DEACTIVATION);
+		//body->setCollisionFlags(body->getCollisionFlags()| GROUND_2 | TRIGGER);
+		body->getBroadphaseHandle()->m_collisionFilterGroup = CONTACT_1 | TRIGGER;
+		body->getBroadphaseHandle()->m_collisionFilterMask = GROUND_1 | PLAYER;
+
+		//((btCollisionObject*)body)->setUserIndex(1);
+		((btCollisionObject*)body)->setUserPointer(user_ptr);
+		return body;
+	}
+}
+
+
+btCollisionObject* PhysicsLevel2D::addEnemy(int x_min, int x_max, int y_min, int y_max, void* user_ptr)
+{
+	int w = x_max - x_min;
+	int h = y_max - y_min;
+
+	int x = x_min + 0.5 * w;
+	int y = y_min + 0.5 * y;
+
+	btCollisionShape* boxShape = new btBoxShape(btVector3(btScalar(0.5*w), btScalar(0.5*h), btScalar(100.)));
+
+	m_collisionShapes.push_back(boxShape);
+
+	btTransform groundTransform;
+	groundTransform.setIdentity();
+	groundTransform.setOrigin(btVector3(x, y, 0));
+
+	// localCreateRigidBody:
+	{
+		btScalar mass(0.);
+
+		//rigidbody is dynamic if and only if mass is non zero, otherwise static
+		bool isDynamic = (mass != 0.f);
+
+		btVector3 localInertia(0, 0, 0);
+		if (isDynamic)
+			boxShape->calculateLocalInertia(mass, localInertia);
+
+		// using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
+		btDefaultMotionState* myMotionState = new btDefaultMotionState(groundTransform);
+		btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, boxShape, localInertia);
+		rbInfo.m_friction = btScalar(0.0);
 		btRigidBody* body = new btRigidBody(rbInfo);
 
 		body->setLinearFactor(btVector3(1, 1, 0));

@@ -9,13 +9,8 @@ SceneManager::SceneManager()
 
 void SceneManager::init()
 {
-<<<<<<< HEAD
   //m_meshBank.add("square", "data/obj/square.obj", "data/img/tile.png");
   //m_meshBank.load();
-=======
-  m_meshBank.add("square", "data/obj/square.obj", "data/img/tile.png");
-  m_meshBank.load();
->>>>>>> 51cef8f22afefb184093a34d45f0818a38d0d2d5
 }
 
 
@@ -56,15 +51,12 @@ void SceneManager::scroll_callback(double xoffset, double yoffset)
 }
 
 
-<<<<<<< HEAD
 void SceneManager::key_callback(int key, int scancode, int action, int mods)
 {
   m_currentScene->key_callback(key, scancode, action, mods);
 }
 
 
-=======
->>>>>>> 51cef8f22afefb184093a34d45f0818a38d0d2d5
 void SceneManager::update(double dt)
 {
   m_currentScene->update(dt);
@@ -73,9 +65,5 @@ void SceneManager::update(double dt)
 
 void SceneManager::view(RenderSystem& rs)
 {
-<<<<<<< HEAD
   m_currentScene->view(&rs);
-=======
-  m_currentScene->view(&rs);  
->>>>>>> 51cef8f22afefb184093a34d45f0818a38d0d2d5
 }

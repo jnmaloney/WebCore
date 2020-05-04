@@ -2,10 +2,7 @@
 #include "TileSet.h"
 #include "TileMap.h"
 #include <iostream>
-<<<<<<< HEAD
 #include "RenderQueue.h"
-=======
->>>>>>> 51cef8f22afefb184093a34d45f0818a38d0d2d5
 
 
 TileLevel::TileLevel()
@@ -50,12 +47,9 @@ void TileLevel::generateCollisionShapes(int x, int y)
         int y_off = j * mMap->tileheight;
 
         // Collision shape for the tile
-<<<<<<< HEAD
         //TileSet::Rect r = mSet->getCollisionShape(id);
-        TileSet::Rect r = {0.f, 0.f, 16.f, 16.f};
-=======
+        //TileSet::Rect r = {0.f, 0.f, 16.f, 16.f};
         TileSet::Rect r = mSet->getCollisionShape(id);
->>>>>>> 51cef8f22afefb184093a34d45f0818a38d0d2d5
 
         // Offset Rect to tile position
         r.x_min += x_off;
@@ -122,7 +116,6 @@ void TileLevel::generateObjects()
   //   // new Enemy(&mPhysicsLevel);
   // }
 }
-<<<<<<< HEAD
 
 
 void TileLevel::createRenderQueue(RenderQueue* a_queue)
@@ -164,5 +157,3 @@ void TileLevel::createRenderQueue(RenderQueue* a_queue)
     }
   }
 }
-=======
->>>>>>> 51cef8f22afefb184093a34d45f0818a38d0d2d5
