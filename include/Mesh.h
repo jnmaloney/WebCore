@@ -17,6 +17,8 @@ public:
   Mesh();
   ~Mesh();
 
+  void clear();
+
   //
   // Submit to render queues
   //
@@ -64,6 +66,8 @@ public:
   std::map< int, IboElement > m_matIboElements;
 
   Texture* texture = 0;
+
+  int tag = 0;
 
 protected:
 

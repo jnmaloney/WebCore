@@ -15,12 +15,17 @@ Mesh::Mesh()
 
 Mesh::~Mesh()
 {
+
+}
+
+
+void Mesh::clear()
+{
     if (m_vbo_vertices) glDeleteBuffers(1, &m_vbo_vertices);
     if (m_vbo_uvs) glDeleteBuffers(1, &m_vbo_uvs);
     if (m_vbo_normals) glDeleteBuffers(1, &m_vbo_normals);
     for (auto i : m_matIboElements)
       glDeleteBuffers(1, &i.second.elements);
-
 }
 
 

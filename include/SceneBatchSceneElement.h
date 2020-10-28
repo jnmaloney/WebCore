@@ -7,7 +7,7 @@
 #include <vector>
 #include <list>
 #include <set>
-#include <graphics.h>
+#include "graphics.h"
 
 
 class RenderSystem;

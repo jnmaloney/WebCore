@@ -30,6 +30,7 @@ public:
   void setCameraPos(const glm::vec3& pos, const glm::vec3& lookAt, const glm::vec3& up = glm::vec3(0, 0, 1));
 
   float* getViewProj();
+  void setViewProj(glm::mat4 vp) { ViewProj = vp; }
 
   // Helpers for drawing
   void bindSquare(Square* mesh);
