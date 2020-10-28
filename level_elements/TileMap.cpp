@@ -121,6 +121,7 @@ void TileMap::loadTMX(const std::string& filename)
         // Part 2
         if (read_layer)
         {
+          Layer layer_data;
           int s2 = 0;
           int s1 = 0;
           int c = 0;
@@ -132,7 +133,7 @@ void TileMap::loadTMX(const std::string& filename)
               int x = std::atoi(line.substr(s1 + 1, s2 - s1 - 1).c_str());
 
               // Apply the value to the tile array
-              //layer_data.push_back(x);
+              layer_data.data.push_back(x);
               // if (layer_tile == 1) layer1.push_back(x);
               // if (layer_tile == 2) layer2.push_back(x);
 
@@ -140,6 +141,8 @@ void TileMap::loadTMX(const std::string& filename)
             }
             s1 = s2;
           }
+
+          layers.push_back(layer_data);
 
           if (c <= 1) read_layer = 0;
           //std::cout << c << std::endl;
