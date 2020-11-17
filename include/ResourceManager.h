@@ -10,10 +10,16 @@
 class ResourceManager 
 {
 public:
+  enum RESOURCE_TYPE
+  {
+    PNG = 0,
+    OBJ,
+  };
+  
   ResourceManager();
   ~ResourceManager();
 
-  void addResource(const char* resource_name, const char* file_path, int resource_type);
+  void addResource(const char* resource_name, const char* file_path, RESOURCE_TYPE resource_type);
 
   void start_async_load();
 
@@ -21,13 +27,14 @@ public:
   
   //void unloadResource(..);
 
+
 protected:
 
   struct Resource
   {
     std::string source_path;
     int loading_status = 0;
-    int resource_type = 0;
+    RESOURCE_TYPE resource_type;
     unsigned int handle = 0;
   };
 

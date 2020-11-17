@@ -19,6 +19,7 @@ void split(const std::string &s, char delim, Out result) {
     }
 }
 
+
 std::vector<std::string> split(const std::string &s, char delim) {
     std::vector<std::string> elems;
     split(s, delim, std::back_inserter(elems));
@@ -47,9 +48,14 @@ void Mesh_obj::load_obj(const char* filename)
       cout << "Cannot open " << filename << endl;
       cerr << "Cannot open " << filename << endl; exit(1);
   }
+  load_stream(in);
+}
 
-  //cout << "opened " << filename << endl;
 
+void Mesh_obj::load_stream(std::istream& in)
+{
+  using namespace std;
+ 
   std::vector<glm::vec3>& load_normals = m_obj_normals;
   std::vector<glm::vec2>& load_uvs = m_obj_uvs;
 
@@ -212,3 +218,10 @@ int Mesh_obj::addUniqueVertex(std::string& vertexString)
 
 }
 
+
+void Mesh_obj::load_obj_data(const char* data, unsigned int size)
+{
+  std::string s(data, size);
+  std::istringstream mb(s);
+  load_stream(mb);
+}

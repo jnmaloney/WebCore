@@ -3,13 +3,31 @@
 #include <emscripten.h>
 #endif
 #include <stdio.h>
+#include "Texture.h"
+#include "Mesh_obj.h"
 
 
 void ResourceManager::f_onload(void* arg, void* buffer, int size)
 {
   Resource* r = (Resource*)arg;
 
-  printf("Resource %s has finished loading with %i bytes.\n", r->source_path.c_str(), size);
+  //printf("Resource %s has finished loading with %i bytes.\n", r->source_path.c_str(), size);
+
+  if (r->resource_type == PNG)
+  {
+    Texture* t = new Texture();
+    t->loadPng_fromMemory((const char*)buffer, size);
+    r->handle = t->getID();
+    r->loading_status = 100;
+    // TODO t leaks
+  }
+  else if (r->resource_type == OBJ)
+  {
+    Mesh_obj* mesh = new Mesh_obj;
+    mesh->load_obj_data((const char*)buffer, size);
+    mesh->upload();
+    r->handle = (unsigned int)mesh;
+  }
 }
 
 
@@ -33,7 +51,7 @@ ResourceManager::~ResourceManager()
 }
 
 
-void ResourceManager::addResource(const char* resource_name, const char* file_path, int resource_type)
+void ResourceManager::addResource(const char* resource_name, const char* file_path, RESOURCE_TYPE resource_type)
 {
   // Check if exitsts
   if (m_resources.count(resource_name) > 0) 
@@ -72,5 +90,7 @@ void ResourceManager::start_async_load()
 
 bool ResourceManager::getResource(const char* resource_name, unsigned int& resource_handle)
 {
+  resource_handle = m_resources[resource_name].handle;
+
   return false;
 }
