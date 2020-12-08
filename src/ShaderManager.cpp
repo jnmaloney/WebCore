@@ -18,19 +18,6 @@ ShaderManager::~ShaderManager()
 }
 
 
-// void ShaderManager::addLoadShader(std::string id, std::string filename)
-// {
-//   std::ifstream in(filename, ios::in);
-//   std::string str((std::istreambuf_iterator<char>(in)),
-//                  std::istreambuf_iterator<char>());
-//
-//   // GLuint vertexShader = loadShader(GL_VERTEX_SHADER, str.c_str());
-//  	// GLuint fragmentShader = loadShader(GL_FRAGMENT_SHADER, str.c_str());
-//   //
-//   // programObject = buildProgram(vertexShader, fragmentShader, "vPosition", "vUV");
-// }
-
-
 void ShaderManager::loadProgram(std::string id, std::string vert_file, std::string frag_file, int att)
 {
   GLuint vertexShader = 0;
@@ -76,8 +63,6 @@ void ShaderManager::loadProgram(std::string id, std::string vert_file, std::stri
   // This is optional
   m_shaderAttributes[programObject]["uniformDiffuse"] = glGetUniformLocation(programObject, "diffuse");
 
-
-
   m_currentProgram = programObject;
   glUseProgram(m_currentProgram);
 }
@@ -119,4 +104,20 @@ void ShaderManager::setProgramVec3(glm::vec3& v)
     uni,
     1,
     &v[0]);
+}
+
+
+void ShaderManager::setParam(std::string id, std::string param, float value)
+{
+  GLuint programObject = m_currentProgram; //m_shaderPrograms[id];
+  auto& attr = m_shaderAttributes[programObject];
+  if (attr.find(param) == attr.end())
+  {
+    GLuint uniform = glGetUniformLocation(programObject, param.c_str());
+    m_shaderAttributes[programObject][param] = uniform;
+  }
+  glUniform1f(
+    attr[param],
+    value
+  );
 }

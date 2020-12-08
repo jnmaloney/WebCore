@@ -4,6 +4,19 @@
 #include <iostream>
 
 
+// void ShaderManager::addLoadShader(std::string id, std::string filename)
+// {
+//   std::ifstream in(filename, ios::in);
+//   std::string str((std::istreambuf_iterator<char>(in)),
+//                  std::istreambuf_iterator<char>());
+//
+//   // GLuint vertexShader = loadShader(GL_VERTEX_SHADER, str.c_str());
+//  	// GLuint fragmentShader = loadShader(GL_FRAGMENT_SHADER, str.c_str());
+//   //
+//   // programObject = buildProgram(vertexShader, fragmentShader, "vPosition", "vUV");
+// }
+
+
 RenderSystem::RenderSystem()
 {
 }
@@ -29,14 +42,10 @@ void RenderSystem::init()
   // Shaders
   m_shaderManager.loadProgram(
     "Default",
-    "data/shaders/base.vert",
+    "data/shaders/scroll.vert",
+    //"data/shaders/base.vert",
     "data/shaders/base.frag"
   );
-  // m_shaderManager.loadProgram(
-  //   "Default",
-  //   "data/shaders/g0.vert",
-  //   "data/shaders/g0.frag"
-  // );
 
   setProjectionOrtho(0, 0, m_window.width, m_window.height);
 }
@@ -61,6 +70,8 @@ void RenderSystem::start()
   glClearColor(mClearColour.x, mClearColour.y, mClearColour.z, 1.0);
   glViewport(0, 0, m_window.width, m_window.height);
   glClear( GL_COLOR_BUFFER_BIT );
+  // glClearColor(0, 0, 0, 1.0);
+  // glClear( GL_DEPTH_BUFFER_BIT );
 
   glDepthFunc(GL_LESS);
   //glDisable(GL_DEPTH_TEST);
@@ -114,18 +125,18 @@ void RenderSystem::setCameraPos(const glm::vec3& pos, const glm::vec3& lookAt, c
                 lookAt,
                 up
                );
-   //
-   // Set frustum details
-   //
-   m_frustum.setCamDef(
-    pos,
-    lookAt,
-    up
-   );
+  //
+  // Set frustum details
+  //
+  m_frustum.setCamDef(
+                pos,
+                lookAt,
+                up
+  );
 
- //
- // Set ViewProj
- //
+  //
+  // Set ViewProj
+  //
   ViewProj = Projection * View;
 }
 
@@ -144,34 +155,6 @@ float* RenderSystem::getViewProj()
 void RenderSystem::bindSquare(Square* square)
 {
   square->bind(this);
-  // GLuint attribute_v_coord = m_shaderManager.getAttribute("attribute_v_coord");
-  // GLuint attribute_v_uv = m_shaderManager.getAttribute("attribute_v_uv");
-  //
-  // // Vertex position
-  // glEnableVertexAttribArray(attribute_v_coord);
-  // glBindBuffer(GL_ARRAY_BUFFER, square->m_vbo_vertices); // TODO
-  // glVertexAttribPointer(
-  //   attribute_v_coord,  // attribute
-  //   4,                  // number of elements per vertex, here (x,y,z,w)
-  //   GL_FLOAT,           // the type of each element
-  //   GL_FALSE,           // take our values as-is
-  //   0,                  // no extra data between each position
-  //   0                   // offset of first element
-  // );
-  //
-  // // Vertex UV
-  // glEnableVertexAttribArray(attribute_v_uv);
-  // glBindBuffer(GL_ARRAY_BUFFER, square->m_vbo_uvs); // TODO
-  // glVertexAttribPointer(
-  //   attribute_v_uv,     // attribute
-  //   2,                  // number of elements per vertex, here (x,y,z)
-  //   GL_FLOAT,           // the type of each element
-  //   GL_FALSE,           // take our values as-is
-  //   0,                  // no extra data between each position
-  //   0                   // offset of first element
-  // );
-  //
-  // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, square->m_ibo_elements);
   m_triangleDrawSize = 6;
 }
 

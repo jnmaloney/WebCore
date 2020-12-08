@@ -29,6 +29,8 @@ public:
 
   void setProgramVec3(glm::vec3& v);  
 
+  void setParam(std::string id, std::string param, float value);
+
 protected:
 
 

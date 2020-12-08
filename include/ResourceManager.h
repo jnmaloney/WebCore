@@ -6,6 +6,10 @@
 #include <string>
 
 
+class Mesh;
+void inspect(Mesh* mesh);
+
+
 // Async resource file loader
 class ResourceManager 
 {
@@ -14,6 +18,8 @@ public:
   {
     PNG = 0,
     OBJ,
+    PILE,
+    OGG
   };
   
   ResourceManager();
@@ -24,6 +30,8 @@ public:
   void start_async_load();
 
   bool getResource(const char* resource_name, unsigned int& resource_handle);
+  //bool getResource(const char* resource_name, void*& resource_handle);
+  bool getResource(const char* resource_name, void** resource_handle);
   
   //void unloadResource(..);
 

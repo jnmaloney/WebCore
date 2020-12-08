@@ -28,3 +28,9 @@ int Random::dice(int a, int b)
   //auto dice = std::bind ( distribution, generator );
   //return dice();
 }
+
+
+float Random::uniform_circle(float r)
+{
+  return r * sqrtf((float)rand() / (float)RAND_MAX);
+}

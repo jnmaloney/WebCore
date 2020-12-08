@@ -24,6 +24,7 @@ public:
 
   void load(const char* filename); // WAV
   void load_ogg(const char* filename);
+  void load_ogg_data(const char* data, unsigned int size);
 
   void play(int track, bool loop = false);
   void stop(int track);
@@ -38,10 +39,6 @@ public:
                   ALsizei frequency);
   void DisplayALError(const char*, ALuint er);
 
-  bool LoadOGGFile(const char * filename, ALenum * format, ALuint* buffer, ALsizei * size,
-                   ALsizei * frequency, ALboolean* loop);
-
-
    std::vector<ogg_int16_t> m_convertedBuffer_save;
    ALint sample_offset;
    bool save = false;
@@ -50,6 +47,10 @@ public:
 
 protected:
 
+  bool LoadOGGFile(const char * filename, ALenum * format, ALuint* buffer, ALsizei * size,
+                   ALsizei * frequency, ALboolean* loop);
+  bool LoadOGGFile(const char * data, unsigned int datasize, ALenum * format, ALuint* buffer, ALsizei * size,
+                   ALsizei * frequency, ALboolean* loop);
 
   ALCcontext *Context;
   ALCdevice *Device;

@@ -67,7 +67,7 @@ protected:
   glm::mat4 ViewProj;
   glm::vec3 mCameraPos = glm::vec3(0.f);
 
-  glm::vec3 mClearColour = glm::vec3(142.0/255.0, 47.0/255.0, 21.0/255.0);
+  glm::vec3 mClearColour;
 
   ViewFrustum m_frustum;
 

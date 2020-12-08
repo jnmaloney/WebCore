@@ -16,6 +16,8 @@ public:
   //std::random_shuffle(mRecords.begin(), mRecords.end(), Random::myrandom);
   static int myrandom (int i) { return dice(0, i); }
 
+  static float uniform_circle(float r);
+
 protected:
 
   static std::default_random_engine generator;

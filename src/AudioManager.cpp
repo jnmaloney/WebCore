@@ -120,6 +120,20 @@ void AudioManager::load_ogg(const char* filename)
 }
 
 
+void AudioManager::load_ogg_data(const char* data, unsigned int datasize)
+{
+  // Create the track handle
+  m_tracks.push_back(AudioTrack());
+  AudioTrack& track = m_tracks[m_tracks.size() - 1];
+
+  ALuint buf = 0;
+  LoadOGGFile(data, datasize,
+              &format, &buf, &size, &freq, &loop);
+
+  alSourcei(track.source, AL_BUFFER, m_audioBuffer);
+}
+
+
 void AudioManager::play(int track, bool loop)
 {
   if (m_currentTrack != -1) stop(m_currentTrack);
@@ -305,6 +319,7 @@ bool AudioManager::LoadWAVFile(const char * filename, ALenum * format, ALuint* b
 
 void AudioManager::tick()
 {
+  if (m_currentTrack == -1) return;
 
   alGetSourcei(m_tracks[m_currentTrack].source, AL_SAMPLE_OFFSET, &sample_offset);
 
@@ -313,16 +328,17 @@ void AudioManager::tick()
   ALint source_state = 0;
   alGetSourcei(m_tracks[m_currentTrack].source, AL_SOURCE_STATE, &source_state);
   // check for errors
-  if (source_state == AL_PLAYING) {
+  //if (source_state == AL_PLAYING) {
           //alGetSourcei(source[0], AL_SOURCE_STATE, &source_state);
           // check for errors
-  }
+  //}
 }
 
 
 bool AudioManager::LoadOGGFile(const char * filename, ALenum * _format, ALuint* _buffer, ALsizei * _size,
                  ALsizei * _frequency, ALboolean* _loop)
 {
+
   std::vector<ogg_int16_t> m_convertedBuffer;
 
   ogg_int16_t convbuffer[4096]; /* take 8k out of the data segment, not the stack */
@@ -570,6 +586,361 @@ bool AudioManager::LoadOGGFile(const char * filename, ALenum * _format, ALuint* 
           ogg_sync_wrote(&oy,bytes);
           if(bytes==0)eos=1;
         }
+      }
+
+      /* ogg_page and ogg_packet structs always point to storage in
+         libvorbis.  They're never freed or manipulated directly */
+
+      vorbis_block_clear(&vb);
+      vorbis_dsp_clear(&vd);
+    }else{
+      fprintf(stderr,"Error: Corrupt header during playback initialization.\n");
+    }
+
+    // Scrape vorbis info
+    freq = vi.rate;
+    if (vi.channels == 1) {
+        if (0)
+            format = AL_FORMAT_MONO8;
+        else if (1)
+            format = AL_FORMAT_MONO16;
+    } else if (vi.channels == 2) {
+        if (0)
+            format = AL_FORMAT_STEREO8;
+        else if (1)
+            format = AL_FORMAT_STEREO16;
+    }
+
+    /* clean up this logical bitstream; before exit we see if we're
+       followed by another [chained] */
+
+    ogg_stream_clear(&os);
+    vorbis_comment_clear(&vc);
+    vorbis_info_clear(&vi);  /* must be called last */
+  }
+
+  /* OK, clean up the framer */
+  ogg_sync_clear(&oy);
+  // std::cout << "end of load ogg function" << std::endl;
+  // std::cout << m_convertedBuffer.size() << " bytes in stream" << std::endl;
+  data = (void*)&m_convertedBuffer[0];
+  size = m_convertedBuffer.size();
+  //freq = vi.rate;
+  //format = AL_FORMAT_STEREO16;
+
+  //create our openAL buffer and check for success
+  ALuint bufs[] = {0, 0};
+  ALuint b = 0;
+
+  alGenBuffers(2, &b);
+  if(alGetError() != AL_NO_ERROR) {
+      std::cerr << "Error gen buffers" << std::endl;
+      std::cerr << alGetError() << std::endl;
+  }
+  //now we put our data into the openAL buffer and
+  //check for success
+  alBufferData(b, format, (void*)data, size*2, freq); // sizeof(x) = 2
+  // std::cout << "data " << data << std::endl;
+  // std::cout << "size " << size << std::endl;
+  // std::cout << "format " << format << std::endl;
+  // std::cout << "freq " << freq << std::endl;
+  // std::cout << "vi.channels " << vi.channels << std::endl;
+  ALenum e = alGetError();
+  if(e != AL_NO_ERROR) {
+      std::cerr << "Error buffer data" << std::endl;
+      if (e == AL_OUT_OF_MEMORY) std::cerr << "AL_OUT_OF_MEMORY" << std::endl;
+      if (e == AL_INVALID_VALUE) std::cerr << "AL_INVALID_VALUE" << std::endl;
+      if (e == AL_INVALID_ENUM) std::cerr << "AL_INVALID_ENUM" << std::endl;
+  }
+
+  m_audioBuffer = b;//bufs[0];
+  //std::cout << "buffer #" << m_audioBuffer << std::endl;
+
+  // Can delete data here?
+  //m_convertedBuffer.resize(0);
+  if (save) m_convertedBuffer_save = m_convertedBuffer;
+
+  return true;
+}
+
+
+bool AudioManager::LoadOGGFile(const char * data_src, unsigned int datasize, ALenum * _format, ALuint* _buffer, ALsizei * _size,
+                 ALsizei * _frequency, ALboolean* _loop)
+{
+
+  std::vector<ogg_int16_t> m_convertedBuffer;
+
+  ogg_int16_t convbuffer[4096]; /* take 8k out of the data segment, not the stack */
+  int convsize=4096;
+
+  ogg_sync_state   oy; /* sync and verify incoming physical bitstream */
+  ogg_stream_state os; /* take physical pages, weld into a logical
+                          stream of packets */
+  ogg_page         og; /* one Ogg bitstream page. Vorbis packets are inside */
+  ogg_packet       op; /* one raw packet of data for decode */
+
+  vorbis_info      vi; /* struct that stores all the static vorbis bitstream
+                          settings */
+  vorbis_comment   vc; /* struct that stores all the bitstream user comments */
+  vorbis_dsp_state vd; /* central working state for the packet->PCM decoder */
+  vorbis_block     vb; /* local working space for packet->PCM decode */
+
+  char *buffer;
+  int  bytes;
+
+  /********** Decode setup ************/
+
+  ogg_sync_init(&oy); /* Now we can read pages */
+
+  while(datasize){ /* we repeat if the bitstream is chained */
+    int eos=0;
+    int i;
+
+    /* grab some data at the head of the stream. We want the first page
+       (which is guaranteed to be small and only contain the Vorbis
+       stream initial header) We need the first page to get the stream
+       serialno. */
+
+    /* submit a 4k block to libvorbis' Ogg layer */
+    buffer=ogg_sync_buffer(&oy,4096);
+    //bytes=fread(buffer,1,4096,stdin);
+    if (datasize > 4096)
+    {
+      bytes = 4096;
+    }
+    else
+    {
+      bytes = datasize;
+    }
+    memcpy(buffer, data_src, bytes);
+    datasize -= bytes;
+    data_src += bytes;
+
+    ogg_sync_wrote(&oy,bytes);
+
+    /* Get the first page. */
+    if(ogg_sync_pageout(&oy,&og)!=1){
+      /* have we simply run out of data?  If so, we're done. */
+      if(bytes<4096)break;
+
+      /* error case.  Must not be Vorbis data */
+      fprintf(stderr,"Input does not appear to be an Ogg bitstream.\n");
+      return false;//exit(1);
+    }
+
+    /* Get the serial number and set up the rest of decode. */
+    /* serialno first; use it to set up a logical stream */
+    ogg_stream_init(&os,ogg_page_serialno(&og));
+
+    /* extract the initial header from the first page and verify that the
+       Ogg bitstream is in fact Vorbis data */
+
+    /* I handle the initial header first instead of just having the code
+       read all three Vorbis headers at once because reading the initial
+       header is an easy way to identify a Vorbis bitstream and it's
+       useful to see that functionality seperated out. */
+
+    vorbis_info_init(&vi);
+    vorbis_comment_init(&vc);
+    if(ogg_stream_pagein(&os,&og)<0){
+      /* error; stream version mismatch perhaps */
+      fprintf(stderr,"Error reading first page of Ogg bitstream data.\n");
+      return false;//exit(1);
+    }
+
+    if(ogg_stream_packetout(&os,&op)!=1){
+      /* no page? must not be vorbis */
+      fprintf(stderr,"Error reading initial header packet.\n");
+      return false;//exit(1);
+    }
+
+    if(vorbis_synthesis_headerin(&vi,&vc,&op)<0){
+      /* error case; not a vorbis header */
+      fprintf(stderr,"This Ogg bitstream does not contain Vorbis "
+              "audio data.\n");
+      return false;//exit(1);
+    }
+
+    /* At this point, we're sure we're Vorbis. We've set up the logical
+       (Ogg) bitstream decoder. Get the comment and codebook headers and
+       set up the Vorbis decoder */
+
+    /* The next two packets in order are the comment and codebook headers.
+       They're likely large and may span multiple pages. Thus we read
+       and submit data until we get our two packets, watching that no
+       pages are missing. If a page is missing, error out; losing a
+       header page is the only place where missing data is fatal. */
+
+    i=0;
+    while(i<2){
+      while(i<2){
+        int result=ogg_sync_pageout(&oy,&og);
+        if(result==0)break; /* Need more data */
+        /* Don't complain about missing or corrupt data yet. We'll
+           catch it at the packet output phase */
+        if(result==1){
+          ogg_stream_pagein(&os,&og); /* we can ignore any errors here
+                                         as they'll also become apparent
+                                         at packetout */
+          while(i<2){
+            result=ogg_stream_packetout(&os,&op);
+            if(result==0)break;
+            if(result<0){
+              /* Uh oh; data at some point was corrupted or missing!
+                 We can't tolerate that in a header.  Die. */
+              fprintf(stderr,"Corrupt secondary header.  Exiting.\n");
+              return false; //exit(1);
+            }
+            result=vorbis_synthesis_headerin(&vi,&vc,&op);
+            if(result<0){
+              fprintf(stderr,"Corrupt secondary header.  Exiting.\n");
+              return false; //exit(1);
+            }
+            i++;
+          }
+        }
+      }
+      /* no harm in not checking before adding more */
+      buffer=ogg_sync_buffer(&oy,4096);
+      if (datasize > 4096)
+      {
+        bytes = 4096;
+      }
+      else
+      {
+        bytes = datasize;
+      }
+      if(bytes==0 && i<2){
+        fprintf(stderr,"End of file before finding all Vorbis headers!\n");
+        return false; //exit(1);
+      }
+      memcpy(buffer, data_src, bytes);
+      datasize -= bytes;
+      data_src += bytes;
+      ogg_sync_wrote(&oy,bytes);
+    }
+
+    /* Throw the comments plus a few lines about the bitstream we're
+       decoding */
+    {
+      char **ptr=vc.user_comments;
+      while(*ptr){
+        fprintf(stderr,"%s\n",*ptr);
+        ++ptr;
+      }
+      fprintf(stderr,"\nBitstream is %d channel, %ldHz\n",vi.channels,vi.rate);
+      fprintf(stderr,"Encoded by: %s\n\n",vc.vendor);
+    }
+
+    convsize=4096/vi.channels;
+
+
+    /* OK, got and parsed all three headers. Initialize the Vorbis
+       packet->PCM decoder. */
+    if(vorbis_synthesis_init(&vd,&vi)==0){ /* central decode state */
+      vorbis_block_init(&vd,&vb);          /* local state for most of the decode
+                                              so multiple block decodes can
+                                              proceed in parallel. We could init
+                                              multiple vorbis_block structures
+                                              for vd here */
+
+      /* The rest is just a straight decode loop until end of stream */
+      while(!eos){
+        while(!eos){
+          int result=ogg_sync_pageout(&oy,&og);
+          if(result==0)break; /* need more data */
+          if(result<0){ /* missing or corrupt data at this page position */
+            fprintf(stderr,"Corrupt or missing data in bitstream; "
+                    "continuing...\n");
+          }else{
+            ogg_stream_pagein(&os,&og); /* can safely ignore errors at
+                                           this point */
+            while(1){
+              result=ogg_stream_packetout(&os,&op);
+
+              if(result==0)break; /* need more data */
+              if(result<0){ /* missing or corrupt data at this page position */
+                /* no reason to complain; already complained above */
+              }else{
+                /* we have a packet.  Decode it */
+                float **pcm;
+                int samples;
+
+                if(vorbis_synthesis(&vb,&op)==0) /* test for success! */
+                  vorbis_synthesis_blockin(&vd,&vb);
+                /*
+
+                **pcm is a multichannel float vector.  In stereo, for
+                example, pcm[0] is left, and pcm[1] is right.  samples is
+                the size of each channel.  Convert the float values
+                (-1.<=range<=1.) to whatever PCM format and write it out */
+
+                while((samples=vorbis_synthesis_pcmout(&vd,&pcm))>0){
+                  int j;
+                  int clipflag=0;
+                  int bout=(samples<convsize?samples:convsize);
+
+                  /* convert floats to 16 bit signed ints (host order) and
+                     interleave */
+                  for(i=0;i<vi.channels;i++){
+                    ogg_int16_t *ptr=convbuffer+i;
+                    float  *mono=pcm[i];
+                    for(j=0;j<bout;j++){
+                      int val=floor(mono[j]*32767.f+.5f);
+
+                      /* might as well guard against clipping */
+                      if(val>32767){
+                        val=32767;
+                        clipflag=1;
+                      }
+                      if(val<-32768){
+                        val=-32768;
+                        clipflag=1;
+                      }
+                      *ptr=val;
+                      ptr+=vi.channels;
+                    }
+                  }
+
+                  if(clipflag)
+                    fprintf(stderr,"Clipping in frame %ld\n",(long)(vd.sequence));
+
+                  //fwrite(convbuffer,2*vi.channels,bout,stdout);
+                  // Copy the buffer ?
+                  // std::cout << 2*vi.channels << std::endl;
+                  // std::cout << sizeof(ogg_int16_t) << std::endl;
+                  for (int i = 0; i < vi.channels * bout; ++i)
+                  {
+                    m_convertedBuffer.push_back(convbuffer[i]);
+                  }
+                  //std::cout << convbuffer << std::endl;
+                  //std::cout << convbuffer << ", " << 2 * vi.channels * bout << std::endl;
+
+                  vorbis_synthesis_read(&vd,bout); /* tell libvorbis how
+                                                      many samples we
+                                                      actually consumed */
+                }
+              }
+            }
+            if(ogg_page_eos(&og))eos=1;
+          }
+        }
+        if (datasize > 0)
+        {
+          buffer=ogg_sync_buffer(&oy,4096);
+          if (datasize > 4096)
+          {
+            bytes = 4096;
+          }
+          else
+          {
+            bytes = datasize;
+          }
+          memcpy(buffer, data_src, bytes);
+          datasize -= bytes;
+          data_src += bytes;
+          ogg_sync_wrote(&oy,bytes);
+        } else eos = 1;
       }
 
       /* ogg_page and ogg_packet structs always point to storage in
